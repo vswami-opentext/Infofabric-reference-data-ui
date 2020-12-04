@@ -1,1 +1,18 @@
-<p>reference-datagrid works!</p>
+<div>
+    <ot-dataTable [(value)]="gridData" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[5,10,20,100]"
+        reorderableColumns="true" resizableColumns="true">
+        <ng-container *ngFor="let col of columns">
+            <ot-column field={{col.field}} [style]="{'width':'200px'}" header={{col.header}} [sortable]="true">
+            </ot-column>
+        </ng-container>
+        <ot-column header="Delete" [style]="{'width':'100px'}">
+            <ng-template pTemplate="body">
+                <div style="position: relative">
+                    <button class="border-less" pbutton (click)="onDeleteRow($event)">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </ng-template>
+        </ot-column>
+    </ot-dataTable>
+</div>

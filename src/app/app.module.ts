@@ -9,6 +9,7 @@ import { ExportComponent } from './components/export/export.component';
 import { ImportComponent } from './components/import/import.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { DataTableModule } from 'tgocp-ng/dist';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { DataTableModule } from 'tgocp-ng/dist';
     BrowserModule,
     AppRoutingModule,
     DataTableModule,
+    FormsModule,
     BrowserAnimationsModule
   ],
   providers: [],
