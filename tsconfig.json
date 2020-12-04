@@ -11,13 +11,18 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2015",
+    "resolveJsonModule": true,
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@angular/*": ["./node_modules/@angular/*"]
+    }
   },
   "angularCompilerOptions": {
-    "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true
+    "fullTemplateTypeCheck": false,
+    "strictInjectionParameters": false,
+    "enableIvy": false
   }
 }

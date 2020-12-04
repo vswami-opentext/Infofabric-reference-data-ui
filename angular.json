@@ -28,7 +28,9 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/tgocp-ng/css/ot-style-meister.css",
+              "node_modules/tgocp-ng/css/perfect-scrollbar.css"
             ],
             "scripts": []
           },

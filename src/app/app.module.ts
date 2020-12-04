@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderBarComponent } from './components/header-bar/header-bar.component';
@@ -8,6 +8,7 @@ import { ReferenceDatagridComponent } from './components/reference-datagrid/refe
 import { ExportComponent } from './components/export/export.component';
 import { ImportComponent } from './components/import/import.component';
 import { FilterComponent } from './components/filter/filter.component';
+import { DataTableModule } from 'tgocp-ng/dist';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,9 @@ import { FilterComponent } from './components/filter/filter.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    DataTableModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
