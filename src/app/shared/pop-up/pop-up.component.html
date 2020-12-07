@@ -1,0 +1,24 @@
+<div class="ot-modal" [ngClass]="showAction ? 'ot-modal--is-active' : ''">
+  <div class="ot-modal__background">
+  </div>
+  <div class="ot-modal__content">
+    <div class="ot-modal__header">
+      <p class="title">
+        <i class="fa fa-question-circle icon-cls"></i>{{this.title}}
+      </p>
+    </div>
+    <div class="ot-modal__body">
+      <ng-content></ng-content>
+    </div>
+    <div class="ot-modal__footer">
+      <div class="ot-btn-group">
+        <button class="ot-btn ot-btn--is-primary" (click)="onSaveClick()">
+          {{primaryButton}}
+        </button>
+        <button class="ot-btn ot-btn--is-secondary" (click)="onCancelClick()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

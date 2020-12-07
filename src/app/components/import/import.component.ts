@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-import',
@@ -7,9 +7,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ImportComponent implements OnInit {
 
+  primaryButtonName:string ='Import';
+  addModalTitle:string ='Import';
+  errorMessage:string;
+  typeErrorMessage:string;
+
+  @Input() showAction:boolean = true;
+
+  @Output()
+  cancelEmit = new EventEmitter();
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  onCancel(){
+    this.showAction = false;
+    this.cancelEmit.emit();
   }
 
 }

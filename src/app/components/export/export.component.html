@@ -1,1 +1,15 @@
-<p>export works!</p>
+<app-pop-up [showAction]='showAction' [primaryButton]='primaryButtonName' [title]='addModalTitle' (cancelEvent)="onCancel()">
+    <div class="ot-form-control">
+        <label class="ot-form-control__label">
+            File Name</label>
+        <input type="text" class="ot-input">
+    </div>
+    <div class="ot-select">
+        <select id="format-list" [(ngModel)]="formatSelected" (change)="formatChange()">
+            <option value="1">
+                Select dropdown</option>
+            <option *ngFor="let format of formatList">
+                {{format.name}}</option>
+        </select>
+    </div>
+</app-pop-up>

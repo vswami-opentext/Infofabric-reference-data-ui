@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-export',
@@ -7,9 +7,25 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ExportComponent implements OnInit {
 
+  primaryButtonName:string ='Export';
+  addModalTitle:string ='Export';
+
+  @Input()
+  showAction:boolean = true;
+
+  @Output()
+  cancelEmit = new EventEmitter();
+
+  formatList:any = [{name: 'xlsx'}]
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  onCancel(){
+    this.showAction = false;
+    this.cancelEmit.emit();
   }
 
 }

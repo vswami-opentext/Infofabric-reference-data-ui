@@ -1,1 +1,20 @@
-<p>import works!</p>
+<app-pop-up [showAction]='showAction' [primaryButton]='primaryButtonName' [title]='addModalTitle' (cancelEvent)="onCancel()">
+    <input type="text" maxlength="5000" placeholder="Please enter a unique Component Name">
+    <div style="color: red;">
+        {{ typeErrorMessage }}
+    </div>
+    <div>
+        <div style="color: green">
+            {{ typeErrorMessage }}
+        </div>
+        <div style="margin-bottom : 1em">
+            Upload .csv file
+        </div>
+        <!-- <ba-file-upload :name="'Upload .csv files'" @change="onUploadChange"></ba-file-upload> -->
+        <input type="button" class="btn btn-primary" (click)="onUploadChange()" value="Upload .csv files">
+    </div>
+    <!-- </div> -->
+    <div style="color: red;">
+        {{ errorMessage }}
+    </div>
+</app-pop-up>
