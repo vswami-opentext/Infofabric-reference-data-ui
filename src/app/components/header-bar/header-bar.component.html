@@ -24,7 +24,7 @@
   </header>
 <div class="row" style="height: 63px;margin-left: 15px;">
     <div class="col-sm-2" style="height: 80px;border-right: 1px solid lightgray;">
-        <div class="ot-form-control">
+        <div class="ot-form-control" style="padding: 2px;">
             <label for="select-list">
                 Tenant</label>
             <div class="ot-select">
@@ -38,7 +38,7 @@
         </div>
     </div>
     <div class="col-sm-2"  style="height: 80px;border-right: 1px solid lightgray;">
-        <div class="ot-form-control">
+        <div class="ot-form-control" style="padding: 2px;">
             <label for="select-list">
                 Model</label>
             <div class="ot-select">
@@ -52,44 +52,39 @@
         </div>
     </div>
     <div class="col-sm-2"  style="height: 80px;border-right: 1px solid lightgray;">
-        <div class="ot-form-control">
+        <div class="ot-form-control" style="padding: 2px;">
             <label for="select-list">
                 Component</label>
             <div class="ot-select">
                 <select name="list" id="comp-list" [(ngModel)]="typeSelected" (change)="typeChange()">
                     <option value="1">
                         Select dropdown</option>
-                        <option *ngFor="let type of typeList">
+                        <option *ngFor="let type of typeList" [ngValue]="type">
                             {{type.name}}</option>
                 </select>
             </div>
         </div>
     </div>
     <div class="col-sm-6">
-        <!-- <app-filter></app-filter>
-        <app-import></app-import>
-        <app-export></app-export> -->
         <div style="float: right;margin-right: 15px;display: flex;">
             <div style="padding: 25px 10px;cursor: pointer;" (click)="popupEvent('filter')">
-                <i class="fa fa-filter" aria-hidden="true"></i>
+                <i class="fa fa-filter" title="Filter" aria-hidden="true"></i>
             </div>
             <div style="padding: 25px 10px;cursor: pointer;">
-                <i class="fa fa-download" aria-hidden="true" (click)="popupEvent('export')"></i>
+                <i class="fa fa-plus" title="Create" aria-hidden="true" (click)="popupEvent('add')"></i>
             </div>
             <div style="padding: 25px 10px;cursor: pointer;">
-                <i class="fa fa-upload" aria-hidden="true" (click)="popupEvent('import')"></i>
+                <i class="fa fa-sign-out" title="Export" aria-hidden="true" (click)="popupEvent('export')"></i>
             </div>
             <div style="padding: 25px 10px;cursor: pointer;">
-                <i class="fa fa-plus" aria-hidden="true" (click)="addEvent()"></i>
+                <i class="fa fa-cloud-upload" title="Import" aria-hidden="true" (click)="popupEvent('import')"></i>
             </div>
         </div>
     </div>
-    <!-- <app-pop-up [showAction]='actionModal' [primaryButton]='primaryButtonName' [title]='addModalTitle'> -->
         <app-filter *ngIf="selectedAction == 'filter'" [showAction]="enableFilter" (cancelEmit)="onCancel()"></app-filter>
         <app-import *ngIf="selectedAction == 'import'" [showAction]="enableFilter" (cancelEmit)="onCancel()"></app-import>
         <app-export *ngIf="selectedAction == 'export'" [showAction]="enableFilter" (cancelEmit)="onCancel()"></app-export>
-    <!-- </app-pop-up> -->
+        <app-add-comp *ngIf="selectedAction == 'add'" [primaryButtonName]="primaryButton" [addModalTitle]="addTitle" [showAction]="enableFilter" (cancelEmit)="onCancel()"></app-add-comp>
 </div>
 <hr>
-<label style="color:white">Grid will be loaded for :  {{enableFilter}}</label>
   

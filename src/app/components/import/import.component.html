@@ -1,5 +1,5 @@
 <app-pop-up [showAction]='showAction' [primaryButton]='primaryButtonName' [title]='addModalTitle' (cancelEvent)="onCancel()">
-    <input type="text" maxlength="5000" placeholder="Please enter a unique Component Name">
+    <input type="text" maxlength="5000" [(ngModel)]="importData.name" placeholder="Please enter a unique Component Name">
     <div style="color: red;">
         {{ typeErrorMessage }}
     </div>
@@ -10,10 +10,8 @@
         <div style="margin-bottom : 1em">
             Upload .csv file
         </div>
-        <!-- <ba-file-upload :name="'Upload .csv files'" @change="onUploadChange"></ba-file-upload> -->
-        <input type="button" class="btn btn-primary" (click)="onUploadChange()" value="Upload .csv files">
+        <input type="file" class="btn btn-primary" (change)="onUploadChange($event)" value="Upload .csv files">
     </div>
-    <!-- </div> -->
     <div style="color: red;">
         {{ errorMessage }}
     </div>

@@ -1,0 +1,23 @@
+<app-pop-up [showAction]='showAction' [primaryButton]='primaryButtonName' [title]='addModalTitle' (cancelEvent)="onCancel()">
+    <div *ngIf="headers.length">
+        <div *ngFor="let header of headers">
+            <div class="ot-form-control" *ngIf="header.activeRelationship && !header.type && !header.isMetaData">
+                    <label for="select-list">
+                            {{header.activeRelationship}}</label>
+                <div class="ot-select" *ngIf="activeRelatedTypes">
+                    <select name="list" id="model-list" [disabled]="onDisable" (change)="modelChange()" [(ngModel)]="rowData[header.value]">
+                        <option value="1">
+                            Select dropdown</option>
+                            <option *ngFor="let val of joinedSelections(header.activeRelationship, header.values)" [ngValue]="rowData[header.value]">
+                                {{val}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ot-form-control" *ngIf="!header.activeRelationship && !header.type && !header.isMetaData">
+                <label class="ot-form-control__label">
+                    {{header.text}}</label>
+                <input type="text" class="ot-input" [disabled]="onDisable" [(ngModel)]="rowData[header.value]">
+            </div>
+        </div>
+    </div>
+</app-pop-up>

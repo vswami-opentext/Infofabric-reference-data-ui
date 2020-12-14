@@ -1,0 +1,154 @@
+{
+	"count": 180,
+	"results": [{
+		"update_dt": "2020-04-20T06:34:52.071286",
+		"customer_name": "Pfizer Global R&D",
+		"src_sys_id": "EU-UK-HSM-SQ1",
+		"gpm_site_id": "26",
+		"site_description": "Bishops Stortford",
+		"ccode": "CPFI02",
+		"notes": "Updated suraj",
+		"user": "usuraj@liaison.dev",
+		"process_dt": "2020-04-20T06:34:52.071313",
+		"src_dat_feed": "UI",
+		"create_dt": "2020-02-04T17:43:21.298234",
+		"ccode_client": {
+			"name": "Axis 360"
+		}
+	}, {
+		"update_dt": "2020-02-06T17:23:25.078575",
+		"customer_name": "Pfizer Ltd. - CHFF",
+		"src_sys_id": "CHALL-SQ022",
+		"gpm_site_id": "1",
+		"site_description": "Allschwill",
+		"ccode": "C11510",
+		"notes": "Updated Manually",
+		"user": "bsankaranarayanan@liaison.dev",
+		"process_dt": "2020-02-06T17:23:25.078581",
+		"src_dat_feed": "UI",
+		"create_dt": "2020-02-04T17:43:21.298737",
+		"ccode_client": {
+			"name": "Axis 360"
+		}
+	}, {
+		"update_dt": "2020-02-04T17:43:21.298966",
+		"customer_name": "AstraZeneca Pharmaceuticals - Manufacturing",
+		"src_sys_id": "US-NA-ALL-SQ-01",
+		"gpm_site_id": "0",
+		"site_description": "Allentown",
+		"ccode": "C50021",
+		"notes": "",
+		"user": "Feed",
+		"process_dt": "2020-02-04T17:43:21.298966",
+		"src_dat_feed": "Feed",
+		"create_dt": "2020-02-04T17:43:21.298966",
+		"ccode_client": {
+			"name": "IRT"
+		}
+	}, {
+		"update_dt": "2020-02-07T06:34:45.268866",
+		"customer_name": "Pfizer Inc. US - USD",
+		"src_sys_id": "CHALL-SQ02",
+		"gpm_site_id": "1",
+		"site_description": "Allschwil1",
+		"ccode": "C11246",
+		"notes": "",
+		"user": "ashwathns@liaison.dev",
+		"process_dt": "2020-02-07T06:34:45.268889",
+		"src_dat_feed": "UI",
+		"create_dt": "2020-02-04T17:43:21.299063",
+		"ccode_client": {
+			"name": "Axis 360"
+		}
+	}, {
+		"update_dt": "2020-04-20T16:37:00.930942",
+		"customer_name": "Pfizer, Inc (Groton)",
+		"src_sys_id": "EU-UK-HSM-SQ1",
+		"gpm_site_id": "2",
+		"site_description": "Horsham",
+		"ccode": "CPFI05",
+		"notes": "",
+		"user": "usuraj@liaison.dev",
+		"process_dt": "2020-04-20T16:37:00.930972",
+		"src_dat_feed": "UI",
+		"create_dt": "2020-02-04T17:43:21.299168",
+		"ccode_client": {
+			"name": "Axis 360"
+		}
+	}, {
+		"update_dt": "2020-02-04T17:43:21.299228",
+		"customer_name": "AstraZeneca Commercial",
+		"src_sys_id": "US-NA-ALL-SQ-01",
+		"gpm_site_id": "0",
+		"site_description": "Allentown",
+		"ccode": "C50020",
+		"notes": "",
+		"user": "Feed",
+		"process_dt": "2020-02-04T17:43:21.299228",
+		"src_dat_feed": "Feed",
+		"create_dt": "2020-02-04T17:43:21.299228",
+		"ccode_client": {
+			"name": "IRT"
+		}
+	}, {
+		"update_dt": "2020-02-04T17:43:21.299288",
+		"customer_name": "Adams, a Division of Pfizer",
+		"src_sys_id": "US-NA-ALL-SQ-01",
+		"gpm_site_id": "0",
+		"site_description": "Allentown",
+		"ccode": "C10565",
+		"notes": "",
+		"user": "Feed",
+		"process_dt": "2020-02-04T17:43:21.299289",
+		"src_dat_feed": "Feed",
+		"create_dt": "2020-02-04T17:43:21.299288",
+		"ccode_client": {
+			"name": "Axis 360"
+		}
+	}, {
+		"update_dt": "2020-02-04T17:43:21.299351",
+		"customer_name": "Pfizer Inc (NY) - Ancillary Supplies",
+		"src_sys_id": "US-NA-ALL-SQ-01",
+		"gpm_site_id": "0",
+		"site_description": "Allentown",
+		"ccode": "C50038",
+		"notes": "",
+		"user": "Feed",
+		"process_dt": "2020-02-04T17:43:21.299351",
+		"src_dat_feed": "Feed",
+		"create_dt": "2020-02-04T17:43:21.299351",
+		"ccode_client": {
+			"name": "Axis 360"
+		}
+	}, {
+		"update_dt": "2020-02-04T17:43:21.299408",
+		"customer_name": "Pfizer Animal Health",
+		"src_sys_id": "EU-UK-HSM-SQ1",
+		"gpm_site_id": "26",
+		"site_description": "Bishops Stortford",
+		"ccode": "CPFI11",
+		"notes": "",
+		"user": "Feed",
+		"process_dt": "2020-02-04T17:43:21.299409",
+		"src_dat_feed": "Feed",
+		"create_dt": "2020-02-04T17:43:21.299408",
+		"ccode_client": {
+			"name": "Axis 360"
+		}
+	}, {
+		"update_dt": "2020-02-04T17:43:21.299464",
+		"customer_name": "Pfizer",
+		"src_sys_id": "EU-UK-HSM-SQ1",
+		"gpm_site_id": "3",
+		"site_description": "Singapore",
+		"ccode": "CPFI07",
+		"notes": "",
+		"user": "Feed",
+		"process_dt": "2020-02-04T17:43:21.299464",
+		"src_dat_feed": "Feed",
+		"create_dt": "2020-02-04T17:43:21.299464",
+		"ccode_client": {
+			"name": "Axis 360"
+		}
+	}]
+}

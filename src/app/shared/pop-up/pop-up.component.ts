@@ -16,8 +16,14 @@ export class PopUpComponent implements OnInit {
   @Input()
   primaryButton:any;
 
+  @Input()
+  size:any;
+
   @Output()
   cancelEvent = new EventEmitter();
+
+  @Output()
+  onAction = new EventEmitter();
   
 
   constructor() { }
@@ -32,6 +38,7 @@ export class PopUpComponent implements OnInit {
 
   onSaveClick(){
     console.log('Saving.....');
+    this.onAction.emit()
   }
 
 }

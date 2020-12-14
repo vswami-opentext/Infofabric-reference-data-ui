@@ -1,36 +1,31 @@
-<app-pop-up [showAction]='showAction' [primaryButton]='primaryButtonName' [title]='addModalTitle' (cancelEvent)="onCancel()">
+<app-pop-up [showAction]='showAction' [size]="size" [primaryButton]='primaryButtonName' [title]='addModalTitle' (cancelEvent)="onCancel()">
     <section>
         <div>
             <a href="">Clear All</a>
             <a style="margin-left: 15px;" href="">Remove All</a>
         </div>
-        <div class="row" *ngFor="let filterRow of filterList">
-            <select style="height:30px;margin-right: 15px;" name="list" id="filterRow" [(ngModel)]="tenantSelected"
-                (change)="tenantChange()">
+        <div class="row" *ngFor="let filterRow of filterList,let i = index">
+            <div class="row" style="margin-left:2%;background-color: lightgray">
+            <select class="col-sm-2" style="height:30px;margin-right: 15px;" name="list" #filterRow
+                (change)="tenantChange(i,filterRow.value)">
                 <option value="1">
                     Select dropdown</option>
-                <option *ngFor="let tenant of tenantList">
-                    {{tenant.name}}</option>
+                <option *ngFor="let attr of filterAttributes" [ngValue]="attr">
+                    {{attr.name}}</option>
             </select>
-            <select style="height:30px;margin-right: 15px;" name="list" [(ngModel)]="tenantSelected"
+            <!-- <select class="col-sm-2" style="height:30px;margin-right: 15px;" name="list" [(ngModel)]="filterObj[i].operator"
                 (change)="modelChange()">
                 <option value="1">
                     Select dropdown</option>
-                <option *ngFor="let tenant of tenantList">
-                    {{tenant.name}}</option>
+                <option *ngFor="let obj of operators">
+                    {{obj.name}}</option>
             </select>
-            <select style="height:30px;margin-right: 15px;" name="list" [(ngModel)]="tenantSelected"
-                (change)="typeChange()">
-                <option value="1">
-                    Select dropdown</option>
-                <option *ngFor="let tenant of tenantList">
-                    {{tenant.name}}</option>
-            </select>
-            <div style="height:30px;margin-right: 15px;" id="checkbox-traditional-form" class="ot-form-control">
+            <input class="ot-form-control col-sm-3" type="text" placeholder="" [(ngModel)]="filterObj[i].value">
+            <div style="height:30px;margin-right: 15px;" id="checkbox-traditional-form" class="col-sm-3 ot-form-control">
                 <div class="ot-checkbox-group">
                     <div class="ot-checkbox-options">
                         <label class="ot-checkbox">
-                            <input type="checkbox" name="cb51" value="c1">
+                            <input type="checkbox" name="cb51" value="c1" [(ngModel)]="filterObj[i].arr">
                             <div class="ot-checkbox__wrapper">
                                 <span class="ot-checkbox__icon">
                                 </span>
@@ -40,9 +35,11 @@
                         </label>
                     </div>
                 </div>
+            </div> -->
+            <i style="margin-top:13px;color:#0072aa;" class="col-sm-1 fa fa-plus-square" aria-hidden="true" (click)="addFilter()"></i>
             </div>
-            <i style="margin-top:13px;" class="fa fa-plus" aria-hidden="true" (click)="addFilter()"></i>
-            <i style="margin-top:13px;" class="fa fa-close" aria-hidden="true" (click)="removeFilter($index)"></i>
+            <i style="margin:20px;" *ngIf="filterList.length > 1" class="col-sm-1 fa fa-close" aria-hidden="true" (click)="removeFilter(i)"></i>
+            <!-- </div> -->
         </div>
     </section>
 </app-pop-up>

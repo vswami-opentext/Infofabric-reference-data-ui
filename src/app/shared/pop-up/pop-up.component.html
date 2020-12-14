@@ -1,7 +1,7 @@
 <div class="ot-modal" [ngClass]="showAction ? 'ot-modal--is-active' : ''">
   <div class="ot-modal__background">
   </div>
-  <div class="ot-modal__content">
+  <div class="ot-modal__content" [ngClass]="size =='lg' ? ' ot-modal-lg-width' : ''">
     <div class="ot-modal__header">
       <p class="title">
         <i class="fa fa-question-circle icon-cls"></i>{{this.title}}
@@ -22,3 +22,6 @@
     </div>
   </div>
 </div>
+<!-- <ot-modal [size]="lg">
+  
+</ot-modal> -->
