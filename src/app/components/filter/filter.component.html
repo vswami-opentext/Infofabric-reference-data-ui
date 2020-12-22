@@ -1,31 +1,23 @@
-<app-pop-up [showAction]='showAction' [size]="size" [primaryButton]='primaryButtonName' [title]='addModalTitle' (cancelEvent)="onCancel()">
+<app-pop-up [showAction]='showAction' [size]="size" [primaryButton]='primaryButtonName' [title]='addModalTitle' (cancelEvent)="onCancel()" (onAction)="applyFilter()">
     <section>
         <div>
-            <a href="">Clear All</a>
-            <a style="margin-left: 15px;" href="">Remove All</a>
+            <a (click)="clearAll()">Clear All</a>
+            <a style="margin-left: 15px;" (click)="removeAll()" >Remove All</a>
         </div>
-        <div class="row" *ngFor="let filterRow of filterList,let i = index">
-            <div class="row" style="margin-left:2%;background-color: lightgray">
-            <select class="col-sm-2" style="height:30px;margin-right: 15px;" name="list" #filterRow
-                (change)="tenantChange(i,filterRow.value)">
-                <option value="1">
-                    Select dropdown</option>
-                <option *ngFor="let attr of filterAttributes" [ngValue]="attr">
-                    {{attr.name}}</option>
-            </select>
-            <!-- <select class="col-sm-2" style="height:30px;margin-right: 15px;" name="list" [(ngModel)]="filterObj[i].operator"
-                (change)="modelChange()">
-                <option value="1">
-                    Select dropdown</option>
-                <option *ngFor="let obj of operators">
-                    {{obj.name}}</option>
-            </select>
-            <input class="ot-form-control col-sm-3" type="text" placeholder="" [(ngModel)]="filterObj[i].value">
+        <div class="row" style="margin-bottom: 2px;" *ngFor="let filterRow of activeFilters,let i = index">
+            <div class="row" style="margin-left:2%;background-color: lightgray;width:85%">
+            
+            <ot-select-dropdown class="select-dropdown col-sm-2" id="attr-{{i}}" [options]='filterAttributes' (onChange)="attrChange(i, $event)"  optionLabel="name">
+                </ot-select-dropdown>
+            <ot-select-dropdown class="select-dropdown col-sm-2" id="operator-{{i}}" [options]='operators' (onChange)="operatorChange(i, $event)"  optionLabel="name">
+                </ot-select-dropdown>
+
+            <input class="ot-form-control col-sm-3" id="value-{{i}}" type="text" placeholder="" (change)="valueChange(i, $event)" >
             <div style="height:30px;margin-right: 15px;" id="checkbox-traditional-form" class="col-sm-3 ot-form-control">
                 <div class="ot-checkbox-group">
                     <div class="ot-checkbox-options">
                         <label class="ot-checkbox">
-                            <input type="checkbox" name="cb51" value="c1" [(ngModel)]="filterObj[i].arr">
+                            <input type="checkbox" id="andop-{{i}}" (change)="andOperation(i,$event)">
                             <div class="ot-checkbox__wrapper">
                                 <span class="ot-checkbox__icon">
                                 </span>
@@ -35,10 +27,10 @@
                         </label>
                     </div>
                 </div>
-            </div> -->
-            <i style="margin-top:13px;color:#0072aa;" class="col-sm-1 fa fa-plus-square" aria-hidden="true" (click)="addFilter()"></i>
             </div>
-            <i style="margin:20px;" *ngIf="filterList.length > 1" class="col-sm-1 fa fa-close" aria-hidden="true" (click)="removeFilter(i)"></i>
+            <i style="margin-top:13px;color:#0072aa;cursor: pointer;" class="col-sm-1 fa fa-plus-square" aria-hidden="true" (click)="addFilter()"></i>
+            </div>
+            <i style="margin:20px;cursor: pointer;" *ngIf="activeFilters.length > 1" class="col-sm-1 fa fa-close" aria-hidden="true" (click)="removeFilter(i)"></i>
             <!-- </div> -->
         </div>
     </section>

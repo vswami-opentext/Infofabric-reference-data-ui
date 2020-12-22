@@ -12,7 +12,7 @@
     </div>
     <div class="ot-modal__footer">
       <div class="ot-btn-group">
-        <button class="ot-btn ot-btn--is-primary" (click)="onSaveClick()">
+        <button class="ot-btn ot-btn--is-primary" [disabled]="disabledPrimary" (click)="onSaveClick()">
           {{primaryButton}}
         </button>
         <button class="ot-btn ot-btn--is-secondary" (click)="onCancelClick()">

@@ -1,8 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { StoreService } from  './.././../services/store.service';
 import { MainServiceService } from 'src/app/services/main-service.service';
+import { NotificationProperties, NotificationService } from 'tgocp-ng/dist';
 import { utils, write } from 'xlsx';
 import _ from 'lodash';
+
 
 @Component({
   selector: 'app-export',
@@ -14,7 +16,7 @@ export class ExportComponent implements OnInit {
   primaryButtonName:string ='Export';
   addModalTitle:string ='Export';
 
-  exportData = {};
+  exportData = {fileName:'',formatSelected:''};
 
   @Input()
   showAction:boolean = true;
@@ -23,8 +25,9 @@ export class ExportComponent implements OnInit {
   cancelEmit = new EventEmitter();
 
   formatList:any = ['xlsx'];
+  prop = new NotificationProperties();
 
-  constructor(private store:StoreService, private mainService:MainServiceService) { }
+  constructor(private store:StoreService, private mainService:MainServiceService, private notification: NotificationService) { }
 
   ngOnInit(): void {
   }
@@ -47,9 +50,15 @@ export class ExportComponent implements OnInit {
   // this.addFilterQueryToParams(payload);
   try {
     // const { data } = await MainServiceService.getFilteredRecords(payload, { relatedFilters: payload.relatedFilters });
-    let data  = this.mainService.getFilteredRecords(payload, { relatedFilters: payload.relatedFilters });
+    this.mainService.getFilteredRecords(payload, { relatedFilters: payload['relatedFilters'] }).subscribe(data => {
+      this.exportDataToDownload(data['results']);
+    }, err => {
+      this.prop.type = "error";
+      this.prop.title = err;
+      this.notification.show(this.prop);
+    });
     // this.allDocuments = data.results;
-    this.exportDataToDownload(data['results']);
+    
   } catch (error) {
     // this.allDocuments = [];
     console.error(error);
@@ -86,8 +95,8 @@ downloadFile(data, fileName, fileFormat) {
     let sheetData = utils.json_to_sheet(data);
     let newWorkBook = utils.book_new();
     utils.book_append_sheet(newWorkBook, sheetData, fileName);
-    let workBookOptions = { bookType: 'xlsx', bookSST: false, type: 'binary' };
-    let workBookOut = write(newWorkBook, workBookOptions);
+    // let workBookOptions = { bookType: 'xlsx', bookSST: false, type: 'binary' };
+    let workBookOut = write(newWorkBook, { bookType: 'xlsx', bookSST: false, type: 'binary' });
     let blob = new Blob([this.s2ab(workBookOut)], { type: 'application/octet-stream' });
     this.download(blob, fileNameWithExtension);
   } else {

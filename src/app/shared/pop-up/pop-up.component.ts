@@ -19,6 +19,9 @@ export class PopUpComponent implements OnInit {
   @Input()
   size:any;
 
+  @Input()
+  disabledPrimary:any;
+
   @Output()
   cancelEvent = new EventEmitter();
 

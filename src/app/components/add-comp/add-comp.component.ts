@@ -1,8 +1,8 @@
-import { Component, OnInit, Input, EventEmitter, Output, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import _ from 'lodash';
-import * as data from './../../../assets/model-dummy.json'
 import { StoreService } from './../../services/store.service';
 import { MainServiceService } from './../../services/main-service.service';
+import { NotificationProperties, NotificationService } from 'tgocp-ng/dist';
 import orderBy from 'lodash/orderBy';
 import get from 'lodash/get';
 import isNumber from 'lodash/isNumber';
@@ -12,7 +12,7 @@ import isNumber from 'lodash/isNumber';
   templateUrl: './add-comp.component.html',
   styleUrls: ['./add-comp.component.scss']
 })
-export class AddCompComponent implements OnInit, OnChanges {
+export class AddCompComponent implements OnInit {
 
   // primaryButtonName:string = 'Add';
   // addModalTitle:string = 'Add Component';
@@ -37,6 +37,10 @@ export class AddCompComponent implements OnInit, OnChanges {
   selectedRelationshipField= {};
   relatedFieldInfo= [];
   rowData = {};
+  prop = new NotificationProperties();
+
+  // @Input()
+  // activeRelatedTypes:any;
 
   @Input()
   primaryButtonName:any;
@@ -56,134 +60,22 @@ export class AddCompComponent implements OnInit, OnChanges {
   @Output()
   cancelEmit = new EventEmitter();
 
-  constructor(private store: StoreService, private service: MainServiceService) { }
+  constructor(private store: StoreService, private service: MainServiceService, private notification: NotificationService) { }
 
-  // ngOnInit(): void {
-    ngOnChanges(){
+  ngOnInit(): void {
+    // ngOnChanges(){
+      console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@--------------------');
       if(this.rowDatas){
         this.rowData =this.rowDatas;
       }
-    // this.rowData = this.rowDatas;
-    let activeType = this.store.activeType;
-    let activeModel = this.store.activeModel;
-    this.attributes = _.filter(activeModel['attributes'], a => activeType['attributes'].includes(a.id));
-    // this.attributes = this.store.attributes;
-    
-     this.headers = _.sortBy(_.map(_.filter(this.attributes, a => a.name !== 'deleted'), (a, i) => {
-      this.fields.push(a.name);
-      let isEquality = this.equality.includes(a.name);
-      let priority = this.priority.data;
+      this.headers = this.store.headers;
+      this.activeRelatedTypes = this.store.activeRelatedTypes;
+    }
 
-      if (isEquality) {
-        priority = this.priority.equality;
-      } else if (a.isMeta) {
-        priority = this.priority.metadata;
-      }
-      return {
-        text: a.name,
-        value: a.name,
-        align: 'left',
-        sortable: true,
-        width: 'auto',
-        isMetaData: a.isMeta,
-        nullAllowed: a.nullAllowed,
-        isEquality,
-        priority,
-        datatype: a.type
-      };
-    }), ['priority']);
-    
-    // const relationships = rels ? rels.relationships : state.activeModel.relationships;
-    this.relationships = this.store.relationships;
-    // if (relationships) {
-      
-    // this.relationships = data[0].relationships.filter(rel => _.find(rel.members, m => m.type === this.store.activeType['_key']));
-    this.activeKeyFields = [];
-      if (this.hasRelationships) {
-        let query = '';
-        this.relationships.forEach((r) => {
-          
-          try {
-            const { members } = r;
-            let keyField;
-            members.forEach((m, mi) => {
-              if (m.extension && m.type === this.store.activeType['_key']) {
-                keyField = m.name;
-                this.relatedEqualities[keyField] = m.isEqualityField;
-                this.activeKeyFields.push({ [keyField]: m.extension.ReferenceDataUI.joinSelections });
-              } else {
-                const relatedMember = members.filter(mem => mem.type === this.store.activeType['_key'])[0];
-                
-                if (relatedMember['extension']) {
-                  this.activeRelatedTypes.push({
-                    type: this.store.typeList.filter(t => t._key === m.type),
-                    relName: relatedMember.name || '',
-                    selections: [relatedMember.extension.ReferenceDataUI.joinSelections, 'id'],
-                    keyField: relatedMember.keyFieldName
-                  });
-                  // this.activeRelatedTypes.push({});
-                }
-              }
-            });
-            this.store.activeKeyFields = this.activeKeyFields;
-          } catch (e) {
-            console.error(`${e}. Relationships not properly configured.`);
-          }
-        });
-        this.query = `${this.fields}`;
-      } else {
-        this.query = `${this.fields}`;
-      }
-      this.store.query = this.query;
-      this.store.fields = this.fields;
-      
-      this.activeKeyFields.forEach((k) => {
-        _.forOwn(k, (values, keyField) => {
-          // headers = this.getRelatedHeaders(keyField, values).concat(headers);
-          
-          let valuesToBeSet = this.getRelatedHeaders(keyField, values);
-          this.headers = valuesToBeSet.concat(this.headers);
-          
-          let keyF = {
-            activeRelationship: keyField,
-            values: valuesToBeSet,
-            isEquality: _.reduce(valuesToBeSet, (value, i) => { return i.isEquality || value; }, true),
-            isMetaData: _.reduce(valuesToBeSet, (value, i) => { return i.isMetaData || value; }, false)
-          };
-          this.headers.unshift(keyF);
-        });
-      });
-      // this.store.headers(this.headers);      
-      this.store.setHeaders(this.headers);
-  }
-  
-  getRelatedHeaders(key, values) {
-    let headers = [];
-    values.forEach((k) => {
-      let isEquality = this.relatedEqualities[key];
-      let priority = this.priority.data;
-      if (isEquality) {
-        priority = this.priority.equality;
-      }
-
-      headers.push({
-        text: `${key}_${k}`,
-        value: `${key}-${k}`,
-        align: 'left',
-        sortable: false,
-        isMetaData: false,
-        width: 'auto',
-        type: 'dropdown', // Needs to be dynamic somehow
-        priority,
-        isEquality
-      });
-    });
-    return headers;
-  }
-
-  joinedSelections(key, value) {
+  joinedSelections(key, value) { 
     this.getRelatedFieldData();
     let values = _.map(this.getRelatedInfoForRelationship_op1(key, value), 'value');
+    console.log('values--->', values);
     if (value) {
       value.forEach((element) => {
         let filteredValues = [];
@@ -216,6 +108,7 @@ export class AddCompComponent implements OnInit, OnChanges {
   }
 
   getRelatedDocuments(type, query, relName, keyField) {
+    console.log('getRelatedDocuments-->');
     // this.$nextTick(async () => {
       const payload = {
         tenant: this.store.activeTenant,
@@ -243,14 +136,15 @@ export class AddCompComponent implements OnInit, OnChanges {
       } catch (error) {
         console.log(error);
       }
-      console.log('----+_+3',this.relatedFieldInfo, this.activeRelatedTypes);
+      this.store.relatedFieldInfo = this.relatedFieldInfo;
     // });
   }
 
   getRelatedFieldData() {
-    if (this.hasRelationships && this.activeRelatedTypes.length > 0) {
+    console.log('----+_+3',this.relatedFieldInfo, this.store.activeRelatedTypes);
+    if (this.hasRelationships && this.store.activeRelatedTypes.length > 0) {
       
-      this.activeRelatedTypes.forEach(async (t) => {
+      this.store.activeRelatedTypes.forEach(async (t) => {
         if (t.type[0]) {
           const query = `${t.selections}`;
           this.getRelatedDocuments(t.type[0].name, query, t.relName, t.keyField);
@@ -287,9 +181,45 @@ export class AddCompComponent implements OnInit, OnChanges {
       return returnValue;
     }
 
+    canSave(item) {
+      let activeRelationshipfound = true;
+      this.headers.forEach((h) => {
+        if (h.activeRelationship) {
+          if (item[h.activeRelationship] && activeRelationshipfound) {
+            activeRelationshipfound = true;
+          } else {
+            activeRelationshipfound = false;
+          }
+        }
+      });
+      // console.log('activeRelationshipfound', activeRelationshipfound);
+      return _.every(item, (v, k) => {
+        let activeHeader = _.find(this.headers, h => h.value === k);
+        if (activeHeader && !activeHeader.nullAllowed) {
+          return v.length > 0 && activeRelationshipfound;
+        }
+        return true;
+      });
+    }
+
   onCancel(){
     this.showAction = false;
     this.cancelEmit.emit();
+  }
+
+  async onAction(){
+    console.log('--->',this.primaryButtonName ,this.rowData);
+    let result;
+    if(this.primaryButtonName == 'create'){
+      result =await this.service.createRecord(this.rowData)
+    } else if(this.primaryButtonName == 'update'){
+      result = await this.service.updateRecord(this.rowData);
+    }else{
+      result =await this.service.deleteRecord(this.rowData);
+    }
+    this.prop.type = 'success';
+    this.prop.title = result;
+    this.notification.show(this.prop); 
   }
 
 }

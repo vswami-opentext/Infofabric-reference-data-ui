@@ -2,22 +2,12 @@
     <a href="#" class="ot-header__brand">
       <img alt="OT2" src="assets/logo.c6528c4e.svg" title="OpenText" class="ot-header__logo">
       <div class="ot-header__name">
-        OT CSS</div>
+        DataSteward UI</div>
     </a>
     <div class="ot-header__actions">
-      <button class="ot-btn ot-header__item">
-        <span class="ot-header__icon">
-          <img alt="" src="/icons/search.svg">
-        </span>
-      </button>
-      <button class="ot-btn ot-header__item">
-        <span class="ot-header__icon">
-          <img alt="" src="/icons/star.svg">
-        </span>
-      </button>
       <button class="ot-btn ot-header__item ot-header__item--is-profile-image">
         <span class="ot-header__icon ot-header__icon">
-          <img alt="" src="/img/avatar.svg">
+          <img alt="" src="assets/user_profile.png">
         </span>
       </button>
     </div>
@@ -26,13 +16,11 @@
     <div class="col-sm-2" style="height: 80px;border-right: 1px solid lightgray;">
         <div class="ot-form-control" style="padding: 2px;">
             <label for="select-list">
-                Tenant</label>
+                Tenant</label><label *ngIf="headerObj.tenantSelected" class="display-tenant">{{headerObj.tenantSelected}}</label>
             <div class="ot-select">
-                <select name="list" id="tenant-list"  [(ngModel)]="tenantSelected" (change)="tenantChange()">
-                    <option value="1">
-                        Select dropdown</option>
+                <select name="list" id="tenant-list"  [(ngModel)]="headerObj.tenantSelected" (change)="tenantChange()">
                     <option *ngFor="let tenant of tenantList">
-                        {{tenant.name}}</option>
+                        {{tenant}}</option>
                 </select>
             </div>
         </div>
@@ -42,9 +30,7 @@
             <label for="select-list">
                 Model</label>
             <div class="ot-select">
-                <select name="list" id="model-list"  [(ngModel)]="modelSelected" (change)="modelChange()">
-                    <option value="1">
-                        Select dropdown</option>
+                <select name="list" id="model-list"  [(ngModel)]="headerObj.modelSelected" (change)="modelChange()">
                         <option *ngFor="let model of modelList">
                             {{model.name}}</option>
                 </select>
@@ -56,9 +42,7 @@
             <label for="select-list">
                 Component</label>
             <div class="ot-select">
-                <select name="list" id="comp-list" [(ngModel)]="typeSelected" (change)="typeChange()">
-                    <option value="1">
-                        Select dropdown</option>
+                <select name="list" id="comp-list" [(ngModel)]="headerObj.typeSelected" (change)="typeChange()">
                         <option *ngFor="let type of typeList" [ngValue]="type">
                             {{type.name}}</option>
                 </select>
@@ -67,10 +51,11 @@
     </div>
     <div class="col-sm-6">
         <div style="float: right;margin-right: 15px;display: flex;">
-            <div style="padding: 25px 10px;cursor: pointer;" (click)="popupEvent('filter')">
+            <div *ngIf="headerObj.typeSelected" style="padding: 25px 10px;cursor: pointer;" (click)="popupEvent('filter')">
                 <i class="fa fa-filter" title="Filter" aria-hidden="true"></i>
+                <i *ngIf="store.filters.length" class="fa fa-exclamation-circle" style="color: red;" aria-hidden="true"></i>
             </div>
-            <div style="padding: 25px 10px;cursor: pointer;">
+            <div *ngIf="headerObj['typeSelected']['id']" style="padding: 25px 10px;cursor: pointer;">
                 <i class="fa fa-plus" title="Create" aria-hidden="true" (click)="popupEvent('add')"></i>
             </div>
             <div style="padding: 25px 10px;cursor: pointer;">
@@ -87,4 +72,3 @@
         <app-add-comp *ngIf="selectedAction == 'add'" [primaryButtonName]="primaryButton" [addModalTitle]="addTitle" [showAction]="enableFilter" (cancelEmit)="onCancel()"></app-add-comp>
 </div>
 <hr>
-  

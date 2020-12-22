@@ -1,4 +1,4 @@
-<app-pop-up [showAction]='showAction' [primaryButton]='primaryButtonName' [title]='addModalTitle' (cancelEvent)="onCancel()">
+<app-pop-up [showAction]='showAction' [primaryButton]='primaryButtonName' [disabledPrimary]="!canSave(selectedRecord)" [title]='addModalTitle' (onAction)="onAction()" (cancelEvent)="onCancel()">
     <div *ngIf="headers.length">
         <div *ngFor="let header of headers">
             <div class="ot-form-control" *ngIf="header.activeRelationship && !header.type && !header.isMetaData">
@@ -21,3 +21,7 @@
         </div>
     </div>
 </app-pop-up>
+
+<!-- <app-pop-up [showAction]='confirmDelete' [primaryButton]='primaryButtonName' [title]='addModalTitle' (onAction)="onDeleteAction()" (cancelEvent)="onDeleteCancel()">
+        <h6>Are you sure you want to delete this record</Area></h6>
+    </app-pop-up> -->

@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MainServiceService } from './../../services/main-service.service';
-import * as data from './../../../assets/model-dummy.json'
-import * as datatype from './../../../assets/type-dummy.json'
 import { StoreService } from './../../services/store.service';
+import { NotificationProperties, NotificationService } from 'tgocp-ng/dist';
 
 @Component({
   selector: 'app-header-bar',
@@ -15,38 +14,91 @@ export class HeaderBarComponent implements OnInit {
   modelList: any = [];
   typeList: any = [];
 
-  typeSelected:any;
-  tenantSelected:any;
-  modelSelected:any;
+  headerObj={ tenantSelected: "", modelSelected: {}, typeSelected: {}};
   actionModal = false;
   selectedAction:string;
   enableFilter:boolean = false;
   showAction = false;
 
-  primaryButton = 'Add';
+  primaryButton = 'Create';
   addTitle = 'Create Record';
+  prop = new NotificationProperties();
 
-  constructor(private mainService: MainServiceService, private store: StoreService) { }
+  constructor(private mainService: MainServiceService, private store: StoreService, private notification: NotificationService) { }
 
   ngOnInit(): void {
-    this.typeList = data[0].types;
-    this.tenantList = this.mainService.fetchTenant();
+    
+    this.mainService.fetchTenant().subscribe( data => {
+      this.tenantList = data['tenant'];
+      this.store.activeTenant = this.headerObj['tenantSelected'] = data['tenant'][0];
+      this.tenantChange();
+    }, err => {
+      this.prop.type = "error";
+      this.prop.title = err;
+      this.notification.show(this.prop);
+    });
   }
 
-  tenantChange(){
-    // this.modelList = this.mainService.fetchModel();
-    this.store.setActiveModel(data);
-    this.modelList = data;
+  tenantChange() {
+    this.store.activeTenant = this.headerObj['tenantSelected'];
+    this.mainService.fetchModel(this.headerObj['tenantSelected']).subscribe(data => {
+      this.modelList = data['models'];
+      this.store.setModelList(this.modelList);
+      // this.headerObj['modelSelected'] =data['models'][0];
+      this.store.setActiveModel(data['models'][0]);
+      this.modelChange();
+      sessionStorage.setItem('activeTenant', this.headerObj['tenantSelected']);
+      this.mainService.getPermissions(this.modelList).subscribe(data => {
+        this.store.setPermission(data);
+        console.log('tenatn permission data--->',data);
+      }, err => {
+        this.prop.type = "error";
+        this.prop.title = err;
+        this.notification.show(this.prop);
+      });
+    }, err => {
+      this.prop.type = "error";
+      this.prop.title = err;
+      this.notification.show(this.prop);
+    });
   }
+
   modelChange(){
-    // this.typeList = this.mainService.fetchComponent();
-    this.typeList = datatype;
+    this.typeList = this.mainService.fetchComponent().subscribe( data => {
+      this.typeList = data;
+      // this.store.setActiveType(this.typeList[0]);
+      this.store.setActiveType(data[0]);
+      this.store.setTypeList(data);
+      this.headerObj['typeSelected']=data[0];
+      this.typeChange()
+    }, err => {
+      this.prop.type = "error";
+      this.prop.title = err;
+      this.notification.show(this.prop);
+    });
   }
+
+  typeCall(){
+    console.log('type params----->', this.store.activeTenant,  this.store.activeModel);
+  }
+
   typeChange(){
-    console.log('fetching grid....',this.typeSelected); 
-    this.store.setActiveModel(data[0]);
-    this.store.setActiveType(this.typeSelected);
-    this.store.setTypeList(this.typeList);
+    console.log('fetching grid....',this.headerObj['typeSelected']);
+    if(this.headerObj['typeSelected']){
+      this.store.setActiveType(this.headerObj['typeSelected']);
+    }
+    // this.typeCall();
+    this.mainService.getFilteredRecords(this.store.activeTenant,  this.store.activeModel['id'] ).subscribe(data => {
+      console.log('first----->', data);
+      this.store.onTypeAction(data);
+      
+    }, err => {
+      this.prop.type = "error";
+      this.prop.title = err;
+      this.notification.show(this.prop);
+    });
+    // this.store.setActiveModel(data[0]);
+    
   }
 
   popupEvent(event){

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { MainServiceService } from './.../../../../services/main-service.service';
 import { StoreService } from './.../../../../services/store.service';
+import { NotificationProperties, NotificationService } from 'tgocp-ng/dist';
 
 @Component({
   selector: 'app-import',
@@ -15,15 +16,16 @@ export class ImportComponent implements OnInit {
   typeErrorMessage:string;
   customImportType:string;
   importErrorData:any;
-  importData ={};
+  importData ={name:''};
   importResponseReceived:any;
+  prop = new NotificationProperties();
 
   @Input() showAction:boolean = true;
 
   @Output()
   cancelEmit = new EventEmitter();
 
-  constructor(private store:StoreService, private mainService: MainServiceService) { }
+  constructor(private store:StoreService, private mainService: MainServiceService, private notification: NotificationService) { }
 
   ngOnInit(): void {
   }
@@ -36,14 +38,18 @@ export class ImportComponent implements OnInit {
           console.log('validation passed');
         } else {
           console.log('-erorororr',event);
-          this.errorMessage = 'Wrong File format, Please try uploading a .csv file';
+          // this.errorMessage = 'Wrong File format, Please try uploading a .csv file';
+          this.prop.type ='error';
+          this.prop.title ='Wrong File format, Please try uploading a .csv file';
+          this.notification.show(this.prop);
         }
 
         console.log('cutom Type', this.importData['name']);
       this.customImportType = this.importData['name'];
       
       const reader = new FileReader();
-      reader.onload = this.importRecords(event, this.importData['name']);
+      // to be added this below method uncomment
+      // reader.onload = this.importRecords(event, this.importData['name']);
       // Read in the image file as a data URL.
       reader.readAsText(f);
   }
@@ -69,18 +75,25 @@ export class ImportComponent implements OnInit {
         }
         console.log('RESP', resp);
         if (!resp['data'] || resp['data'] === '') {
-          this.importErrorData.status = 'error';
-          this.importErrorData.message = 'Internal Error has occured, upload failed. Please verify the CSV';
+          // this.importErrorData.status = 'error';
+          // this.importErrorData.message = 'Internal Error has occured, upload failed. Please verify the CSV';
+          this.prop.type ='error';
+          this.prop.title ='Internal Error has occured, upload failed. Please verify the CSV';
+          this.notification.show(this.prop);
         } else if (resp['data'].status === 'SUCCESS') {
           console.log('Success response');
           this.importErrorData.message = `The new Component ${this.customImportType} has been created.`;
+          this.prop.type ='success';
+          this.prop.title =`The new Component ${this.customImportType} has been created.`;
+          
           // const refResp = await this.refreshModel();
           const refResp = this.mainService.refreshModel();
           console.log('response received for refresh', refResp);
           if (refResp.status !== 200) {
-            this.importErrorData.message = `${this.importErrorData.message}, but the model needs to be refreshed in the Query service`;
+            this.prop.title = `${this.prop.title}, but the model needs to be refreshed in the Query service`;
           }
           this.importErrorData.status = 'success';
+          this.notification.show(this.prop);
         } else {
           this.importErrorData = resp['data'];
         }

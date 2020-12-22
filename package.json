@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "ng serve --proxy-config proxyconfig.json",
+    "dev": "cross-env NODE_ENV=development && node server/index.js",
+    "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -21,6 +22,9 @@
     "@angular/router": "~9.1.12",
     "@opentext/otcss": "^2.0.5",
     "bootstrap": "^4.5.3",
+    "cross-env": "^7.0.3",
+    "dot-env": "0.0.1",
+    "dotenv": "^8.2.0",
     "font-awesome": "^4.7.0",
     "jquery": "^3.5.1",
     "rxjs": "~6.5.4",

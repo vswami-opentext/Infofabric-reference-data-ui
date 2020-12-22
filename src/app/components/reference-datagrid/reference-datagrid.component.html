@@ -1,11 +1,11 @@
-<div>
-    <ot-dataTable [(value)]="gridData" name="gridVal" [rows]="10" (onRowClick)="onRowClick($event)"[paginator]="true" [rowsPerPageOptions]="[5,10,20,100]"
+<div *ngIf="gridData && activeType">
+    <ot-dataTable [(value)]="gridData" name="gridVal" [rows]="10" (onRowClick)=" onRowClick($event)"[paginator]="true" [rowsPerPageOptions]="[5,10,20,100]"
         reorderableColumns="true" resizableColumns="true">
         <ng-container *ngFor="let col of columns">
             <ot-column field={{col.field}} [style]="{'width':'200px'}" header={{col.header}} [sortable]="true">
             </ot-column>
         </ng-container>
-        <ot-column header="Delete" [style]="{'width':'100px'}">
+        <ot-column *ngIf="!store.isReadOnly && userWritable()"header="Delete" [style]="{'width':'100px'}">
             <ng-template pTemplate="body">
                 <div style="position: relative">
                     <button class="border-less" pbutton>
@@ -16,5 +16,6 @@
         </ot-column>
     </ot-dataTable>
 </div>
+<h4 *ngIf="!gridData" class="empty-wrapper">No Records Found</h4>
 
-<app-add-comp [onDisable]="deleteModal" [primaryButtonName]="primaryButtonName" [addModalTitle]="addModalTitle" [showAction]="editModal" [rowDatas]="rowData" (cancelEmit)="onCancel()"></app-add-comp>
+<app-add-comp *ngIf="editModal" [onDisable]="deleteModal" [primaryButtonName]="primaryButtonName" [addModalTitle]="addModalTitle" [showAction]="editModal" [rowDatas]="rowData" (cancelEmit)="onCancel()"></app-add-comp>
