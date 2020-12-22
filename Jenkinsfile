@@ -148,7 +148,7 @@ timestamps {
 
                 if (utils.isPRBuild()) {
                     echo "Pushing the image to registry..."
-                    k8sDocker.push(imageName: dockerImageName, imageTag: env.PACKAGE_VERSION)
+                    k8sDocker.push(imageName: dockerImageName, imageTag: env.PACKAGE_VERSION, registry: Registry.BROOKPARK)
                     k8sDocker.push(imageName: dockerImageName, imageTag: "latest")
 
                     echo "Creating github release notes..."
@@ -167,7 +167,8 @@ timestamps {
                     kubectl: kubectl,
                     serviceNow: serviceNow,
                     namespace: Namespace.DEVELOPMENT,
-                    rollingUpdate: true
+                    rollingUpdate: true,
+                    clusters: [ Cluster.OTBP ]
             )
         } catch (err) {
             currentBuild.result = "FAILURE";
