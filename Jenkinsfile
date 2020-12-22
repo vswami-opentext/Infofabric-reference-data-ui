@@ -24,7 +24,7 @@ def dockerImageName
 def crApproved = false
 
 timestamps {
-    node('at4d-c3-agent') {
+    node('at4d-c3-nodejs') {
 
         stage('Checkout') {
             // check out repository
