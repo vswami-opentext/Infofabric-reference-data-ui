@@ -1,0 +1,37 @@
+{
+    "en": {
+        "moredetails": "More Details...",
+        "fewerdetails": "Fewer Details...",
+        "title": "Server unable to process request"
+    },
+    "fr": {
+        "moredetails": "Plus de détails...",
+        "fewerdetails": "Moins de détails...",
+        "title": "Le serveur ne parvient pas à traiter la requête"
+    },
+    "de": {
+        "moredetails": "Mehr Details...",
+        "fewerdetails": "Weniger Details...",
+        "title": "Server kann Anforderung nicht verarbeiten"
+    },
+    "ru": {
+        "moredetails": "Больше...",
+        "fewerdetails": "Меньше...",
+        "title": "Серверу не удалось обработать запрос"
+    },
+    "es": {
+        "moredetails": "Más detalles...",
+        "fewerdetails": "Menos detalles...",
+        "title": "El servidor no puede procesar la solicitud"
+    },
+    "it": {
+        "moredetails": "Più dettagli...",
+        "fewerdetails": "Meno dettagli...",
+        "title": "Il server non è in grado di elaborare la richiesta"
+    },
+    "pt": {
+        "moredetails": "Mais detalhes...",
+        "fewerdetails": "Menos detalhes...",
+        "title": "Servidor não consegue processar solicitação"
+    }
+}
