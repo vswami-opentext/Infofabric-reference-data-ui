@@ -1,5 +1,5 @@
 apps:
   - script: ./server/index.js
-    name: 'infofabri-apps-web-ref-ui'
+    name: 'infofabric-reference-data-ui'
     env:
       NODE_ENV: production
