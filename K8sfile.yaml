@@ -1,12 +1,12 @@
-### infofabric-reference-data-ui dependencies
+### infofabric-reference-data-api dependencies
 #
 apiVersion: v1
 kind: Service
 metadata:
-  name: infofabric-reference-data-ui
+  name: infofabric-reference-data-api
 spec:
   selector:
-    app: infofabric-reference-data-ui
+    app: infofabric-reference-data-api
   ports:
   - name: application
     protocol: TCP
@@ -15,15 +15,15 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: infofabric-reference-data-ui
+  name: infofabric-reference-data-api
   labels:
-    app: infofabric-reference-data-ui
+    app: infofabric-reference-data-api
 spec:
   replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: infofabric-reference-data-ui
+      app: infofabric-reference-data-api
       zone: bb-hsec
   strategy:
     rollingUpdate:
@@ -33,7 +33,7 @@ spec:
   template:
     metadata:
       labels:
-        app: infofabric-reference-data-ui
+        app: infofabric-reference-data-api
         zone: bb-hsec
       annotations:
         prometheus.io/scrape: 'true'
@@ -43,15 +43,15 @@ spec:
       imagePullSecrets:
         - name: alloy-imagepullsecret
       containers:
-      - name: infofabric-reference-data-ui
-        image: bpdockerhub/infofabric-reference-data-ui:latest
+      - name: infofabric-reference-data-api
+  #      env:
+  #        - name: API_URL
+  #          valueFrom:
+  #            configMapKeyRef:
+  #              name: infofabric-reference-data-ui
+  #              key: API_URL
+        image: bpdockerhub/infofabric-reference-data-api:latest
         imagePullPolicy: Always
-        env:
-        - name: API_URL
-          valueFrom:
-            configMapKeyRef:
-              name: infofabric-reference-data-ui
-              key: API_URL
         ports:
         - name: application
           containerPort: 3000
@@ -86,6 +86,11 @@ spec:
 #            value: "60*14"
           - name: NODE_ENV
             value: production
+          - name: API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: infofabric-reference-data-ui
+                key: API_URL
         volumeMounts:
           - name: ifabric-secrets
             mountPath: /opt/opentext/infofabric/secrets
