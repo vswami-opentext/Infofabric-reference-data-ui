@@ -1,12 +1,12 @@
-### infofabric-reference-data-api dependencies
+### infofabric-reference-data-ui dependencies
 #
 apiVersion: v1
 kind: Service
 metadata:
-  name: infofabric-reference-data-api
+  name: infofabric-reference-data-ui
 spec:
   selector:
-    app: infofabric-reference-data-api
+    app: infofabric-reference-data-ui
   ports:
   - name: application
     protocol: TCP
@@ -15,15 +15,15 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: infofabric-reference-data-api
+  name: infofabric-reference-data-ui
   labels:
-    app: infofabric-reference-data-api
+    app: infofabric-reference-data-ui
 spec:
   replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: infofabric-reference-data-api
+      app: infofabric-reference-data-ui
       zone: bb-hsec
   strategy:
     rollingUpdate:
@@ -33,7 +33,7 @@ spec:
   template:
     metadata:
       labels:
-        app: infofabric-reference-data-api
+        app: infofabric-reference-data-ui
         zone: bb-hsec
       annotations:
         prometheus.io/scrape: 'true'
@@ -43,14 +43,14 @@ spec:
       imagePullSecrets:
         - name: alloy-imagepullsecret
       containers:
-      - name: infofabric-reference-data-api
+      - name: infofabric-reference-data-ui
   #      env:
   #        - name: API_URL
   #          valueFrom:
   #            configMapKeyRef:
   #              name: infofabric-reference-data-ui
   #              key: API_URL
-        image: bpdockerhub/infofabric-reference-data-api:latest
+        image: bpdockerhub/infofabric-reference-data-ui:latest
         imagePullPolicy: Always
         ports:
         - name: application
