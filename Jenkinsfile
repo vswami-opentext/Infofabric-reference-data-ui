@@ -18,7 +18,9 @@ def k8sDocker = new Docker()
 def kubectl = new Kubectl()
 def serviceNow = new ServiceNow()
 def slack = new Slack()
-
+def dockerImageName = "bpdockerhub/infofabric-reference-data-ui"
+def sonarProjectName = "infofabric-reference-data-ui"
+def artifactory_url = 'https://artifactory.otxlab.net/artifactory/liaison-dm-releases/'
 def deployment
 def dockerImageName
 def crApproved = false
@@ -124,7 +126,7 @@ timestamps {
         //        qg.checkQualityGate(env.REPO_NAME, 10, "${env.WORKSPACE}/.sonar")
         //    }
 
-        stage('Build Docker Image') {
+       /* stage('Build Docker Image') {
             timeout(25) {
                 // getting context
                 //utils.unstashMany(["npmBasics", "nodeModules", "dist", "buildInfo", "code"])
@@ -156,8 +158,28 @@ timestamps {
                     utils.createGithubReleaseMultiLineReleaseNotes(env.PACKAGE_NAME, env.GIT_COMMIT, env.PACKAGE_VERSION, releaseNotes)
                 }
             }
+        }*/
+   
+           stage('Build Docker Image') {
+                    utils.unstashMany(["npmBasics", "nodeModules", "dist", "buildInfo"])
+                    deployment = deployments.create(
+                    name: 'infofabric-reference-data-ui',
+                    version: env.PACKAGE_VERSION,
+                    description: 'Deployment of infofabric-reference-data-ui',
+                    dockerImageName: dockerImageName,
+                    dockerImageTag: env.PACKAGE_VERSION,
+                    yamlFile: 'K8sfile.yaml',   // optional, defaults to 'K8sfile.yaml'
+                    gitUrl: env.GIT_URL,        // optional, defaults to env.GIT_URL
+                    gitCommit: env.GIT_COMMIT,  // optional, defaults to env.GIT_COMMIT
+                    gitRef: env.PACKAGE_VERSION ,        // optional, defaults to env.GIT_COMMIT
+                    kubectl: kubectl
+                )
+
+            k8sDocker.build(imageName: dockerImageName);
+            milestone label: 'Docker image built', ordinal: 100
+            k8sDocker.push(imageName: dockerImageName, imageTag: env.PACKAGE_VERSION, registry: Registry.BROOKPARK)
         }
-    }
+   }
 
         stage('Deploy To K8S, Dev') {
         // Deploy to Kubernetes
@@ -176,7 +198,7 @@ timestamps {
         }
     }
 
-
+/*
     if (utils.isMasterBuild()) {
         stage('Promote To QA') {
 
@@ -438,5 +460,5 @@ timestamps {
                 error "PRODUCTION deployment rejected in ServiceNow"
             }
         }
-    }
+    }*/
 }
