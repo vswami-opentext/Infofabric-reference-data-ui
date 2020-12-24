@@ -1,29 +1,30 @@
-kind: Service
+### infofabric-reference-data-ui dependencies
+#
 apiVersion: v1
+kind: Service
 metadata:
-  name: infofabri-apps-web-ref-ui
+  name: infofabric-reference-data-ui
 spec:
   selector:
-    app: infofabri-apps-web-ref-ui
+    app: infofabric-reference-data-ui
   ports:
-  - name: https
+  - name: application
     protocol: TCP
-    port: 9443
+    port: 3000
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: infofabri-apps-web-ref-ui
+  name: infofabric-reference-data-ui
   labels:
-    app: infofabri-apps-web-ref-ui
+    app: infofabric-reference-data-ui
 spec:
-  minReadySeconds: 5
   replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: infofabri-apps-web-ref-ui
-      zone: bb-lsec
+      app: infofabric-reference-data-ui
+      zone: bb-hsec
   strategy:
     rollingUpdate:
       maxSurge: 2
@@ -32,218 +33,67 @@ spec:
   template:
     metadata:
       labels:
-        app: infofabri-apps-web-ref-ui
-        zone: bb-lsec
+        app: infofabric-reference-data-ui
+        zone: bb-hsec
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path:   '/metrics'
+        prometheus.io/scheme: 'https'
     spec:
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      securityContext: {}
-      terminationGracePeriodSeconds: 60
-      volumes:
-      - name: alloy-core-certs
-        secret:
-          defaultMode: 420
-          secretName: alloy-core-certs
       imagePullSecrets:
-      - name: alloy-imagepullsecret
+        - name: alloy-imagepullsecret
       containers:
-      - name: infofabri-apps-web-ref-ui
-        env:
-        - name: HAPI_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: infofabri-apps-web-ref-ui
-              key: HAPI_PORT
-        - name: HAPI_FIT_THRESHOLDS
-          valueFrom:
-            configMapKeyRef:
-              name: infofabri-apps-web-ref-ui
-              key: HAPI_FIT_THRESHOLDS
-        - name: CLIENT_ID
-          valueFrom:
-            configMapKeyRef:
-              name: infofabri-apps-web-ref-ui
-              key: CLIENT_ID
-        - name: CLIENT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: infofabri-apps-web-ref-ui
-              key: CLIENT_SECRET
-        - name: SSO_SESSION_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: infofabri-apps-web-ref-ui
-              key: SSO_SESSION_SECRET
-        - name: APP_BASE_URL
-          valueFrom:
-            configMapKeyRef:
-              name: infofabri-apps-web-ref-ui
-              key: APP_BASE_URL
-        - name: API_BASE_URL
-          valueFrom:
-            configMapKeyRef:
-              name: infofabri-apps-web-ref-ui
-              key: API_BASE_URL
-        - name: NODE_ENV
-          valueFrom:
-            configMapKeyRef:
-              name: alloy-core-common
-              key: NODE_ENV
-        - name: SSO_DISCOVERY_ENDPOINT
-          valueFrom:
-            configMapKeyRef:
-              name: alloy-core-common
-              key: SSO_DISCOVERY_ENDPOINT
-        - name: SSO_IDENTITYGATEWAY_API_URL
-          valueFrom:
-            configMapKeyRef:
-              name: alloy-core-common
-              key: SSO_IDENTITYGATEWAY_API_URL
-        - name: WEB_LAUNCHER_URL
-          valueFrom:
-            configMapKeyRef:
-              name: alloy-core-common
-              key: WEB_LAUNCHER_URL
-        - name: ALLOY_COMMON_TLS_PRIVATEKEY_PATH
-          valueFrom:
-            configMapKeyRef:
-              name: alloy-core-common
-              key: ALLOY_COMMON_TLS_PRIVATEKEY_PATH
-        - name: ALLOY_COMMON_TLS_CERT_PATH
-          valueFrom:
-            configMapKeyRef:
-              name: alloy-core-common
-              key: ALLOY_COMMON_TLS_CERT_PATH
-        - name: SSO_ALLOW_UNAUTHORIZED
-          valueFrom:
-            configMapKeyRef:
-              name: infofabri-apps-web-ref-ui
-              key: SSO_ALLOW_UNAUTHORIZED
-        # New Relic
-        - name: ENV
-          valueFrom:
-            configMapKeyRef:
-              name: new-relic
-              key: ENV
-        - name: PLATFORM
-          valueFrom:
-            configMapKeyRef:
-              name: new-relic
-              key: PLATFORM
-        - name: CELL
-          valueFrom:
-            configMapKeyRef:
-              name: new-relic
-              key: CELL
-        - name: ZONE
-          valueFrom:
-            configMapKeyRef:
-              name: new-relic
-              key: ZONE
-        - name: DC
-          valueFrom:
-            configMapKeyRef:
-              name: new-relic
-              key: DC
-        - name: BU
-          valueFrom:
-            configMapKeyRef:
-              name: new-relic
-              key: BU
-        - name: CUSTOMER
-          valueFrom:
-            configMapKeyRef:
-              name: new-relic
-              key: CUSTOMER
-        - name: NEW_RELIC_LOG
-          value: "stdout"
-        - name: NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
-          valueFrom:
-            configMapKeyRef:
-              name: new-relic
-              key: NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
-        - name: NEW_RELIC_SEND_DATA_ON_EXIT
-          valueFrom:
-            configMapKeyRef:
-              name: new-relic
-              key: NEW_RELIC_SEND_DATA_ON_EXIT
-        - name: NEW_RELIC_EXPLAIN_ENABLED
-          valueFrom:
-            configMapKeyRef:
-              name: new-relic
-              key: NEW_RELIC_EXPLAIN_ENABLED
-        - name: NEW_RELIC_RECORD_SQL
-          valueFrom:
-            configMapKeyRef:
-              name: new-relic
-              key: NEW_RELIC_RECORD_SQL
-        - name: NEW_RELIC_APP_NAME
-          value: "df-webforms-$(ENV)-$(PLATFORM)_$(CELL)_$(ZONE)_$(DC)-$(BU)"
-        - name: NEWRELIC_AGENT_ENABLE
-          valueFrom:
-            configMapKeyRef:
-              name: alloy-apps-df-webforms-ui
-              key: NEWRELIC_AGENT_ENABLE
-          # New Relic Secrets
-        - name: NEW_RELIC_LICENSE_KEY
-          valueFrom:
-            secretKeyRef:
-              name: new-relic
-              key: NEW_RELIC_LICENSE_KEY
-        - name: NEW_RELIC_PROXY_USER
-          valueFrom:
-            secretKeyRef:
-              name: new-relic
-              key: NEW_RELIC_PROXY_USER
-        - name: NEW_RELIC_PROXY_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: new-relic
-              key: NEW_RELIC_PROXY_PASSWORD
-        image: docker.ci.liaison.com/visibility/web-datamodel-ui:latest
-# This is matching to HAPI port definition
-        ports:
-        - containerPort: 9443
-          protocol: TCP
+      - name: infofabric-reference-data-ui
+        image: bpdockerhub/infofabric-reference-data-ui:latest
         imagePullPolicy: Always
-
-# livenessProbe triggers restart of pod on failure
+        env:
+        - name: API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: infofabric-reference-data-ui
+              key: API_URL
+        ports:
+        - name: application
+          containerPort: 3000
         livenessProbe:
-          failureThreshold: 1
           httpGet:
             path: /health
-            port: 9443
-            scheme: HTTPS
-          initialDelaySeconds: 30
-          periodSeconds: 20
-          successThreshold: 1
-          timeoutSeconds: 10
-
-# readinessProbe defines when the pod is made available to load balancer
+            port: application
+            scheme: HTTP
+          initialDelaySeconds: 180
+          periodSeconds: 60
+          timeoutSeconds: 120
+          failureThreshold: 10
         readinessProbe:
-          failureThreshold: 3
           httpGet:
             path: /health
-            port: 9443
-            scheme: HTTPS
-          periodSeconds: 5
-          successThreshold: 1
-          timeoutSeconds: 10
-
-# Some wild guess to start experimenting:
+            port: application
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 120
+          failureThreshold: 10
         resources:
-          limits:
-            cpu: "1000m"
-            memory: 2Gi
           requests:
-            cpu: "200m"
-            memory: "500m"
-
-# The mounts done to each container and their linking to k8s volumes
+            memory: "1Gi"
+            cpu: "0.2"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+        env:
+          # same in all environments (for now)
+#          - name: CACHE_TTL
+#            value: "60*14"
+          - name: NODE_ENV
+            value: production
         volumeMounts:
-        - mountPath: /etc/visibility/ca-certs
-          name: alloy-core-certs
-          readOnly: true
-        - mountPath: /etc/alloy/certs
-          name: alloy-core-certs
-          readOnly: true
+          - name: ifabric-secrets
+            mountPath: /opt/opentext/infofabric/secrets
+      volumes:
+      - name: ifabric-secrets
+        secret:
+          secretName: ifabric-secrets
+          defaultMode: 0644
+          items:
+          - key: app-secrets.properties
+            path: app-secrets.properties
