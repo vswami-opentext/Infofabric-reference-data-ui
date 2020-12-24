@@ -22,7 +22,7 @@ def dockerImageName = "bpdockerhub/infofabric-reference-data-ui"
 def sonarProjectName = "infofabric-reference-data-ui"
 def artifactory_url = 'https://artifactory.otxlab.net/artifactory/liaison-dm-releases/'
 def deployment
-def dockerImageName
+//def dockerImageName
 def crApproved = false
 
 timestamps {
