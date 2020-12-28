@@ -1,11 +1,10 @@
+require('dotenv').config();
 const express = require('express')
 const app = express()
 const axios = require('axios');
-require('dotenv').config();
 const bodyParser = require('body-parser')
 const session = require('express-session') // -> session storage using mongo
 const path = require('path')
-
 
 app.use(session({ secret: 'zz', resave: true, saveUninitialized: true }))
 app.use(bodyParser.json())
@@ -15,13 +14,17 @@ app.use(express.static(path.join(__dirname, '../dist/infofabric-reference-data-u
 app.all('/api/*', async(req, res) => {
 	req.session.quote = req.body.quote;
 	try{
-		return axios.get(process.env.API_URL)
+		return axios.get(process.env.API_URL+req.url)
 			   .then(data => res.status(200).send(data.data))
 			   .catch(err => res.send(err));
 	 }
 	 catch(err){
 		console.error("GG", err);
 	 }
+})
+
+app.get('/health', (req, res) => {
+    res.json({status: 'UP'});
 })
 
 app.get('/*', (req, res) => {
