@@ -10,7 +10,7 @@ spec:
   ports:
   - name: application
     protocol: TCP
-    port: 3000
+    port: 4200
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -54,7 +54,7 @@ spec:
         imagePullPolicy: Always
         ports:
         - name: application
-          containerPort: 3000
+          containerPort: 4200
         livenessProbe:
           httpGet:
             path: /health
