@@ -1,5 +1,5 @@
 apps:
-  - script: ./server/index.js
+  - script: ./index.js
     name: 'infofabric-reference-data-ui'
     env:
       NODE_ENV: production
