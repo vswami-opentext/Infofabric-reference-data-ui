@@ -27,7 +27,7 @@ spec:
       zone: bb-hsec
   strategy:
     rollingUpdate:
-      maxSurge: 2
+      maxSurge: 1
       maxUnavailable: 0
     type: RollingUpdate
   template:
@@ -50,7 +50,7 @@ spec:
   #            configMapKeyRef:
   #              name: infofabric-reference-data-ui
   #              key: API_URL
-        image: bpdockerhub/infofabric-reference-data-ui:latest
+        image: bpdockerhub/infofabric-reference-data-ui:0.1.1
         imagePullPolicy: Always
         ports:
         - name: application
