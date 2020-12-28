@@ -17,6 +17,7 @@ COPY --chown=node:node ./ /home/node/app/
 # running the server as the 'node' user in the 'node' group
 USER node
 
+RUN npm run build
 # pm2 is installed as root in pm2-docker-alpine so we need to redefine our global mobule directory and do a reinstall
 RUN mkdir -p /home/node/.npm-global/bin \
   && npm config set prefix '/home/node/.npm-global' \
