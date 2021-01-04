@@ -7,7 +7,7 @@ const path = require('path')
 
 app.use(bodyParser.json())
 
-app.use(express.static(path.join(__dirname, './dist/infofabric-reference-data-ui')))
+// app.use(express.static(path.join(__dirname, './dist/infofabric-reference-data-ui')))
 
 app.all('/api/*', async(req, res) => {
 	try{
