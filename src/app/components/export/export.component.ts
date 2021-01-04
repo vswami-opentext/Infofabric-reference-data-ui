@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { StoreService } from  './.././../services/store.service';
 import { MainServiceService } from 'src/app/services/main-service.service';
 import { NotificationProperties, NotificationService } from 'tgocp-ng/dist';
@@ -9,20 +9,21 @@ import _ from 'lodash';
 @Component({
   selector: 'app-export',
   templateUrl: './export.component.html',
-  styleUrls: ['./export.component.scss']
+  styleUrls: ['./export.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExportComponent implements OnInit {
+export class ExportComponent implements OnInit, OnDestroy {
 
   primaryButtonName:string ='Export';
   addModalTitle:string ='Export';
+  warningModal:boolean = false;
+  filterCount:any;
 
   exportData = {fileName:'',formatSelected:''};
 
-  @Input()
-  showAction:boolean = true;
+  @Input() showAction:boolean = true;
 
-  @Output()
-  cancelEmit = new EventEmitter();
+  @Output() cancelEmit = new EventEmitter();
 
   formatList:any = ['xlsx'];
   prop = new NotificationProperties();
@@ -36,34 +37,44 @@ export class ExportComponent implements OnInit {
     console.log('--->',event);
     this.exportData['formatSelected'] = event.target.value;
   }
-  export(){
-
-  const payload = {
-    tenant: this.store.activeTenant,
-    model: this.store.activeModel['name'],
-    type: this.store.activeType['name'],
-    fields: this.store.fields,
-    limit: 0,
-    queryString: this.store.query,
-    rels: JSON.stringify(this.store.activeKeyFields)
-  };
-  // this.addFilterQueryToParams(payload);
-  try {
-    // const { data } = await MainServiceService.getFilteredRecords(payload, { relatedFilters: payload.relatedFilters });
-    this.mainService.getFilteredRecords(payload, { relatedFilters: payload['relatedFilters'] }).subscribe(data => {
-      this.exportDataToDownload(data['results']);
-    }, err => {
-      this.prop.type = "error";
-      this.prop.title = err;
-      this.notification.show(this.prop);
-    });
-    // this.allDocuments = data.results;
-    
-  } catch (error) {
-    // this.allDocuments = [];
-    console.error(error);
+  noFilterWarning(){
+    if(this.store.filters.length > 0){
+      this.export()
+    }else{
+      this.showAction =false;
+      this.warningModal = true;
+    }
   }
-}
+
+  export() {
+    if (this.userCanQuery()) {
+      const payload = {
+        tenant: this.store.activeTenant,
+        model: this.store.activeModel['name'],
+        type: this.store.activeType['name'],
+        fields: this.store.fields,
+        limit: 0,
+        queryString: this.store.query,
+        rels: JSON.stringify(this.store.activeKeyFields)
+      };
+        this.addFilterQueryToParams(payload);
+      try {
+        // const { data } = await MainServiceService.getFilteredRecords(payload, { relatedFilters: payload.relatedFilters });
+        this.mainService.getFilteredRecords(payload, { relatedFilters: payload['relatedFilters'] }).subscribe(data => {
+          this.exportDataToDownload(data['results']);
+        }, err => {
+          this.prop.type = "error";
+          this.prop.title = err;
+          this.notification.show(this.prop);
+        });
+        // this.allDocuments = data.results;
+
+      } catch (error) {
+        // this.allDocuments = [];
+        console.error(error);
+      }
+    }
+  }
 
 s2ab(s) {
   const buf = new ArrayBuffer(s.length);
@@ -87,6 +98,7 @@ download(blob, fileName) {
     link.click();
     document.body.removeChild(link);
   }
+  this.warningModal = false;
 }
 
 downloadFile(data, fileName, fileFormat) {
@@ -156,8 +168,92 @@ flattenDocuments(documents) {
 }
 
   onCancel(){
-    this.showAction = false;
+    this.showAction = this.warningModal =false;
     this.cancelEmit.emit();
+  }
+
+  userCanQuery() {
+    return (this.store.permission[`${this.store.activeModel['name']}_dq`] !== undefined) ? this.store.permission[`${this.store.activeModel['name']}_dq`] : true;
+  }
+
+  addFilterQueryToParams(payload) {
+    // let filters = this.getFilters();
+    let filters = this.store.filters;
+    if (filters[0] && filters[0].attribute && filters[0].query) {
+      this.filterCount = filters.length;
+      _.forEach(filters, (obj) => {
+        /* This "if" part is specifically implemented for filtering relationship
+        data. This is a tempoarary solution and filtering
+        should be supported in backend by default. UI
+        should avoid getting id's and filtering based on them... */
+        if (obj.type === 'dropdown') {
+          try {
+            let arr = [];
+            if (obj.operator.value === 'LIKE') {
+              // Another workaround for contains
+              const query = obj.query.replace(/%/g, '');
+              const field = this.store.relatedFieldInfo.filter((f) => {
+                const allValues = _.map(f.values, 'name');
+                const hasValue = _.filter(allValues, v => v.toLowerCase().includes(query.toLowerCase())).length > 0;
+                return hasValue;
+              });
+              let vals = [];
+              if (field[0] && field[0].values) {
+                vals = _.map(field[0].values.filter(v => v.name.toLowerCase().includes(query.toLowerCase())), 'value');
+              }
+              let op = obj.isOr ? 'OR' : 'AND';
+              payload.relatedFilters = payload.relatedFilters || {};
+              payload.relatedFilters[op] = payload.relatedFilters[op] || [];
+
+              arr = payload.relatedFilters[op];
+              arr.push({
+                field: field[0] ? field[0].actualFilterValue : '',
+                op: 'IN',
+                value: vals,
+                not: obj.isNot
+              });
+              payload.relatedFilters[op] = arr;
+            } else {
+              const field = this.store.relatedFieldInfo.filter(f => _.map(f.values, 'name').includes(obj.query));
+              const val = field[0] ? field[0].values.filter(v => v.name === obj.query) : [];
+
+              let op = obj.isOr ? 'OR' : 'AND';
+              payload.relatedFilters = payload.relatedFilters || {};
+              payload.relatedFilters[op] = payload.relatedFilters[op] || [];
+
+              arr = payload.relatedFilters[op];
+              arr.push({
+                field: field[0] ? field[0].actualFilterValue : '',
+                op: obj.operator.value,
+                value: val[0] ? val[0].value : [],
+                not: obj.isNot
+              });
+              payload.relatedFilters[op] = arr;
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        } else {
+          let op = obj.isOr ? 'OR' : 'AND';
+          payload.relatedFilters = payload.relatedFilters || {};
+          payload.relatedFilters[op] = payload.relatedFilters[op] || [];
+
+          payload.relatedFilters[op].push({
+            field: obj.attribute,
+            op: obj.operator.value,
+            value: obj.query,
+            not: obj.isNot
+          });
+        }
+      });
+    } else {
+      this.filterCount = 0;
+      // this.store.setFilters([]);
+    }
+  }
+
+  ngOnDestroy(){
+
   }
 
 }

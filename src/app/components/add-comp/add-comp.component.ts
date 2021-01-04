@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import _ from 'lodash';
 import { StoreService } from './../../services/store.service';
 import { MainServiceService } from './../../services/main-service.service';
@@ -10,7 +10,8 @@ import isNumber from 'lodash/isNumber';
 @Component({
   selector: 'app-add-comp',
   templateUrl: './add-comp.component.html',
-  styleUrls: ['./add-comp.component.scss']
+  styleUrls: ['./add-comp.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddCompComponent implements OnInit {
 
@@ -42,23 +43,12 @@ export class AddCompComponent implements OnInit {
   // @Input()
   // activeRelatedTypes:any;
 
-  @Input()
-  primaryButtonName:any;
-
-  @Input()
-  addModalTitle:any;
-
-  @Input()
-  showAction:any;
-
-  @Input()
-  onDisable:any;
-
-  @Input()
-  rowDatas:any;
-
-  @Output()
-  cancelEmit = new EventEmitter();
+  @Input() primaryButtonName:any;
+  @Input() addModalTitle:any;
+  @Input() showAction:any;
+  @Input() onDisable:any;
+  @Input() rowDatas:any;
+  @Output() cancelEmit = new EventEmitter();
 
   constructor(private store: StoreService, private service: MainServiceService, private notification: NotificationService) { }
 

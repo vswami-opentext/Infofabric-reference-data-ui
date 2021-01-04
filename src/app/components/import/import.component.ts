@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MainServiceService } from './.../../../../services/main-service.service';
 import { StoreService } from './.../../../../services/store.service';
 import { NotificationProperties, NotificationService } from 'tgocp-ng/dist';
@@ -6,7 +6,8 @@ import { NotificationProperties, NotificationService } from 'tgocp-ng/dist';
 @Component({
   selector: 'app-import',
   templateUrl: './import.component.html',
-  styleUrls: ['./import.component.scss']
+  styleUrls: ['./import.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImportComponent implements OnInit {
 
@@ -19,11 +20,10 @@ export class ImportComponent implements OnInit {
   importData ={name:''};
   importResponseReceived:any;
   prop = new NotificationProperties();
+  changeDetection: ChangeDetectionStrategy.OnPush
 
   @Input() showAction:boolean = true;
-
-  @Output()
-  cancelEmit = new EventEmitter();
+  @Output() cancelEmit = new EventEmitter();
 
   constructor(private store:StoreService, private mainService: MainServiceService, private notification: NotificationService) { }
 
@@ -49,7 +49,12 @@ export class ImportComponent implements OnInit {
       
       const reader = new FileReader();
       // to be added this below method uncomment
-      // reader.onload = this.importRecords(event, this.importData['name']);
+      this.importRecords(event, this.importData['name']);
+      reader.onloadend = function(e){
+        // you can perform an action with readed data here
+        console.log('-plain text-->',reader.result);
+      }
+      console.log('reader.readAsText(f)-plain text-->', reader.readAsText(f));
       // Read in the image file as a data URL.
       reader.readAsText(f);
   }

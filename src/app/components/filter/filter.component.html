@@ -7,17 +7,22 @@
         <div class="row" style="margin-bottom: 2px;" *ngFor="let filterRow of activeFilters,let i = index">
             <div class="row" style="margin-left:2%;background-color: lightgray;width:85%">
             
-            <ot-select-dropdown class="select-dropdown col-sm-2" id="attr-{{i}}" [options]='filterAttributes' (onChange)="attrChange(i, $event)"  optionLabel="name">
+            <ot-select-dropdown class="select-dropdown col-sm-2" id="attr-{{i}}" [options]='filterAttributes' [(ngModel)]="filterRow.attribute" (onChange)="attrChange(i, $event)"  optionLabel="name">
                 </ot-select-dropdown>
-            <ot-select-dropdown class="select-dropdown col-sm-2" id="operator-{{i}}" [options]='operators' (onChange)="operatorChange(i, $event)"  optionLabel="name">
+            <ot-select-dropdown class="select-dropdown col-sm-2" id="operator-{{i}}" [options]='operators' [(ngModel)]="filterRow.operator" (onChange)="operatorChange(i, $event)"  optionLabel="name">
                 </ot-select-dropdown>
+            <input *ngIf="!filterRow.type" class="ot-form-control col-sm-3" id="value-{{i}}" type="text" placeholder="" [(ngModel)]="filterRow.queryText" (change)="updateNestedData(i, $event)" >
 
-            <input class="ot-form-control col-sm-3" id="value-{{i}}" type="text" placeholder="" (change)="valueChange(i, $event)" >
+            <div *ngIf="filterRow.type === 'dropdown'">
+                <input class="ot-form-control col-sm-3" id="value-{{i}}" type="text" placeholder="" [(ngModel)]="filterRow.queryText" (change)="updateNestedData(i, $event)" >
+                <ot-select-dropdown class="select-dropdown col-sm-2" id="operator-{{i}}" [options]='operators' [(ngModel)]="filterRow.operator" (onChange)="operatorChange(i, $event)"  optionLabel="name">
+                </ot-select-dropdown>
+            </div>
             <div style="height:30px;margin-right: 15px;" id="checkbox-traditional-form" class="col-sm-3 ot-form-control">
                 <div class="ot-checkbox-group">
                     <div class="ot-checkbox-options">
                         <label class="ot-checkbox">
-                            <input type="checkbox" id="andop-{{i}}" (change)="andOperation(i,$event)">
+                            <input type="checkbox" id="andop-{{i}}" (change)="andOperation(i,$event)" [(ngModel)]="filterRow.arr">
                             <div class="ot-checkbox__wrapper">
                                 <span class="ot-checkbox__icon">
                                 </span>
@@ -28,7 +33,7 @@
                     </div>
                 </div>
             </div>
-            <i style="margin-top:13px;color:#0072aa;cursor: pointer;" class="col-sm-1 fa fa-plus-square" aria-hidden="true" (click)="addFilter()"></i>
+            <i style="margin-top:13px;color:#0072aa;cursor: pointer;" class="col-sm-1 fa fa-plus-square" aria-hidden="true" (click)="addNewFilter()"></i>
             </div>
             <i style="margin:20px;cursor: pointer;" *ngIf="activeFilters.length > 1" class="col-sm-1 fa fa-close" aria-hidden="true" (click)="removeFilter(i)"></i>
             <!-- </div> -->

@@ -1,15 +1,14 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
-import * as data from '../../../assets/response.json';
+import { Component, OnInit, OnChanges, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import _ from 'lodash';
-import  *  as  dummy  from  './../../../assets/response.json';
 import { StoreService } from './../../services/store.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-reference-datagrid',
   templateUrl: './reference-datagrid.component.html',
   styleUrls: ['./reference-datagrid.component.scss']
 })
-export class ReferenceDatagridComponent implements OnInit, OnChanges {
+export class ReferenceDatagridComponent implements OnInit, OnChanges, OnDestroy {
   gridData:any;
   columns: Array<any> = [];
   rowData = {};
@@ -33,6 +32,8 @@ export class ReferenceDatagridComponent implements OnInit, OnChanges {
   }
   relatedEqualities = {};
   activeRelatedTypes = [];
+
+  subs: Subscription[] = [];
 
   constructor(private store: StoreService) { }
 
@@ -206,6 +207,7 @@ export class ReferenceDatagridComponent implements OnInit, OnChanges {
           // headers = this.getRelatedHeaders(keyField, values).concat(headers);
           
           let valuesToBeSet = this.getRelatedHeaders(keyField, values);
+          console.log('-----------------------------^%---->', valuesToBeSet);
           this.headers = valuesToBeSet.concat(this.headers);
           
           let keyF = {
@@ -254,5 +256,11 @@ export class ReferenceDatagridComponent implements OnInit, OnChanges {
       return this.store.permission[this.store.activeTenant].dataStream;
     }
     return false;
+  }
+
+  ngOnDestroy(){
+    this.subs.forEach(sub => {
+      sub.unsubscribe();
+    })
   }
 }

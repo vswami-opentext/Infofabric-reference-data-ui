@@ -12,6 +12,7 @@
       </button>
     </div>
   </header>
+<app-notification *ngIf="isLoading" ></app-notification>
 <div class="row" style="height: 63px;margin-left: 15px;">
     <div class="col-sm-2" style="height: 80px;border-right: 1px solid lightgray;">
         <div class="ot-form-control" style="padding: 2px;">
@@ -55,11 +56,11 @@
                 <i class="fa fa-filter" title="Filter" aria-hidden="true"></i>
                 <i *ngIf="store.filters.length" class="fa fa-exclamation-circle" style="color: red;" aria-hidden="true"></i>
             </div>
-            <div *ngIf="headerObj['typeSelected']['id']" style="padding: 25px 10px;cursor: pointer;">
+            <div *ngIf="headerObj['typeSelected']['id'] && !isReadOnly && userWritable" style="padding: 25px 10px;cursor: pointer;">
                 <i class="fa fa-plus" title="Create" aria-hidden="true" (click)="popupEvent('add')"></i>
             </div>
             <div style="padding: 25px 10px;cursor: pointer;">
-                <i class="fa fa-sign-out" title="Export" aria-hidden="true" (click)="popupEvent('export')"></i>
+                <i class="fa fa-external-link-square" title="Export" aria-hidden="true" (click)="popupEvent('export')"></i>
             </div>
             <div style="padding: 25px 10px;cursor: pointer;">
                 <i class="fa fa-cloud-upload" title="Import" aria-hidden="true" (click)="popupEvent('import')"></i>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnChanges, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { StoreService } from './../../services/store.service';
 import { MainServiceService } from './../../services/main-service.service';
 import _ from 'lodash';
@@ -38,12 +38,30 @@ export class FilterComponent implements OnInit {
 
   @Input() showAction:any;
 
-  @Output()
-  cancelEmit = new EventEmitter();
+  @Output() cancelEmit = new EventEmitter();
   
   constructor(private store:StoreService, private service: MainServiceService) { }
 
   ngOnInit(): void {
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&--->out');
+    this.setupCommonFilterMethod();
+    this.store.loadGrid().subscribe(data => {
+      this.activeFilters = [];
+      this.filterAttributes = [];
+      console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&--->in');
+      this.setupCommonFilterMethod();
+    });
+  }
+
+
+  // addFilter(){
+  //   this.activeFilters.push({attribute:{},operator:{},value:'',arr:false});
+  // }
+  removeFilter(index){
+    this.activeFilters.splice(index,1);
+  }
+
+  setupCommonFilterMethod() {
     _.forEach(this.store.headers, (obj) => {
       if (!obj.activeRelationship) {
         this.filterAttributes.push({ name: obj.text, value: obj.value, type: obj.type });
@@ -51,29 +69,20 @@ export class FilterComponent implements OnInit {
     });
     console.log('filter---->', this.filterAttributes);
     this.filterAttributes;
+    const filtersInSession = this.getFilterFromSession();
+    console.log('session storeage at---->', filtersInSession);
+    
+    // if (this.useSession && filtersInSession) {
+    if (filtersInSession) {
+      this.store.filters = filtersInSession;
+      _.forEach(filtersInSession, (filter, index) => {
+        this.addFilter(filter);
+      });
+    } else {
+      this.addNewFilter();
+    }
   }
 
-
-  addFilter(){
-    this.activeFilters.push({attribute:{},operator:{},value:'',arr:false});
-  }
-  removeFilter(index){
-    this.activeFilters.splice(index,1);
-  }
-
-  // ngOnChanges(){
-
-  // getFilterAttributes(){
-  //   const filterAttributes = [];
-  //   _.forEach(this.store.headers, (obj) => {
-  //     if (!obj.activeRelationship) {
-  //       filterAttributes.push({ name: obj.text, value: obj.value, type: obj.type });
-  //     }
-  //   });
-  //   console.log('filter---->', filterAttributes);
-  //   return filterAttributes;
-  // }
-// }
   attrChange(filterIndex, event) {
     console.log('attr--->', event.value)
     let attribute = event.value;
@@ -150,7 +159,7 @@ export class FilterComponent implements OnInit {
 
   operatorChange(i, event) {
     console.log('operator--->', event.value)
-    this.activeFilters[i].operator = event.value.name;
+    this.activeFilters[i].operator = event.value;
   }
 
   valueChange(i, event) {
@@ -161,6 +170,10 @@ export class FilterComponent implements OnInit {
   andOperation(i, event) {
     console.log('arr--->', event.target.checked);
     this.activeFilters[i].arr = event.target.checked;
+  }
+
+  addFilter(filter) {
+    this.activeFilters.push(filter);
   }
 
   addNewFilter() {
@@ -203,8 +216,9 @@ export class FilterComponent implements OnInit {
 
   async applyFilter(){
     this.store.setFilters(this.activeFilters);
-    console.log('filter data->', this.activeFilters)
-    const payload = {
+    console.log('filter data->', this.activeFilters);
+    window.sessionStorage.setItem(this.store.activeType['name'], JSON.stringify(this.activeFilters));
+    let payload = {
       tenant: this.store.activeTenant,
       model: this.store.activeModel['name'],
       type: this.store.activeType['name'],
@@ -216,7 +230,7 @@ export class FilterComponent implements OnInit {
       rels: JSON.stringify(this.store.activeKeyFields),
       descending: this.store.pagination.descending
     };
-    this.addFilterQueryToParams(payload);
+    payload = this.addFilterQueryToParams(payload);
     try {
       if (payload.tenant && payload.model) {
         await this.getReferenceDocuments(payload);
@@ -237,17 +251,25 @@ export class FilterComponent implements OnInit {
       });
     }
   }
+
   getFilterFromSession() {
     // --to be add
-    // return JSON.parse(window.sessionStorage.getItem("key" || this.sessionKey));
-    return JSON.parse(window.sessionStorage.getItem("key"));
+    return JSON.parse(window.sessionStorage.getItem(this.store.activeType['name']));
+    // return JSON.parse(window.sessionStorage.getItem("key"));
   }
   getFilters() {
     // --to be add
     // if (this.useSession) {
       return this.getFilterFromSession() || this.activeFilters;
     // }
-    return this.activeFilters;
+    // return this.activeFilters;
+  }
+
+  updateNestedData(filterIndex, text) {
+    // this.activeFilters[filterIndex].queryText = text;
+    console.log('trust-=->', text, this.activeFilters[filterIndex]);
+    this.updateFilterQuery(filterIndex);
+    this.setFilterStatus();
   }
 
   addFilterQueryToParams(payload) {
@@ -323,9 +345,12 @@ export class FilterComponent implements OnInit {
       this.filterCount = 0;
       // this.store.setFilters([]);
     }
+    return payload;
   }
 
   async getReferenceDocuments(payload){
+    console.log('filter query payload---->', payload);
+    this.showAction = false;
     const { tenant, model, type, rels, fields, sort, descending, skip, limit, filters, relatedFilters, queryString } = payload;
     // commit('SET_LOADING', true);
     // commit('SET_ERRORS', []);

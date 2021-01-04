@@ -1,4 +1,4 @@
-<app-pop-up [showAction]='showAction' [primaryButton]='primaryButtonName' [title]='addModalTitle' (onAction)="export()" (cancelEvent)="onCancel()">
+<app-pop-up [showAction]='showAction' [primaryButton]='primaryButtonName' [title]='addModalTitle' (onAction)="noFilterWarning()" (cancelEvent)="onCancel()">
     <div class="ot-form-control">
         <label class="ot-form-control__label">
             File Name</label>
@@ -12,4 +12,7 @@
                 {{format}}</option>
         </select>
     </div>
+</app-pop-up>
+<app-pop-up [showAction]="warningModal" [primaryButton]="primaryButtonName" [title]="addModalTitle" (onAction)="export()" (cancelEvent)="onCancel()">
+    <span style="padding: 50px;font-size:larger">No Filters have been applied, Do you still want to export ?</span>
 </app-pop-up>
