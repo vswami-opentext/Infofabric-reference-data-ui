@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxyconfig.json",
     "dev": "cross-env NODE_ENV=development && node server.js",
-    "build": "ng build --prod",
+    "build": "ng build --base-href /reference-data-ui --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
