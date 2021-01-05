@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 app.use((req, res, next) => {
 		console.log('-------------------headers1------------------------\n');
 		console.log('url 1--->', req.url);
-		console.log('req url 1--->', req);
+		console.log('req headers 1--->', req.headers);
 		next();
 });
 app.get('/api/*', async(req, res) => {
