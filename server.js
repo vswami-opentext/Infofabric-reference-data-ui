@@ -14,6 +14,7 @@ app.use((req, res, next) => {
 		console.log('req headers 1--->', req.headers);
 		next();
 });
+
 app.get('/api/*', async(req, res) => {
 	try{
 		console.log('-------------------headers------------------------\n');
@@ -25,7 +26,7 @@ app.get('/api/*', async(req, res) => {
 		console.log('smuserdn', req.headers['smuserdn']);
 		console.log('---------------------************----------------------\n');
 		console.log('url--->', process.env.API_URL+req.url);
-		return axios.get(process.env.API_URL+req.url)
+		return axios.get(process.env.API_URL+'/'+req.params[0])
 			   .then(data => res.status(200).send(data.data))
 			   .catch(err => res.send(err));
 	 }
@@ -42,8 +43,8 @@ const _app_folder = __dirname + '/dist/infofabric-reference-data-ui';
 
 app.use('/reference-data-ui', express.static(_app_folder, {maxAge: '1m'}));
 
-app.get('/*', (req, res) => {
-	return res.sendFile(path.join(__dirname, './dist/infofabric-reference-data-ui/index.html'))
+app.get('/reference-data-ui', (req, res) => {
+		return res.sendFile(path.join(__dirname, './dist/infofabric-reference-data-ui/index.html'))
 })
 
 app.listen(4200, _ => console.log('Loaded Successfully...'))
