@@ -16,8 +16,8 @@ export class MainServiceService {
 
   fetchTenant(){
     // console.log('env---->', process.env.URL);
-    return this.http.get('http://localhost:3000/datamodel');
-    // return this.http.get('/api/tenants');
+    // return this.http.get('http://localhost:3000/datamodel');
+    return this.http.get('/api/tenants');
   }
 
   fetchModel(tenant){

@@ -11,6 +11,14 @@ app.use(bodyParser.json())
 
 app.all('/api/*', async(req, res) => {
 	try{
+		console.log('-------------------headers------------------------\n');
+		console.dir(req.headers);
+		console.log('-------------------IM_UserID-----------------\n');
+		console.log('im_userid', req.headers['im_userid']);
+		console.log('im_buid', req.headers['im_buid']);
+		console.log('smuser', req.headers['smuser']);
+		console.log('smuserdn', req.headers['smuserdn']);
+		console.log('---------------------************----------------------\n');
 		console.log('url--->', process.env.API_URL+''+req.url)
 		return axios.get(process.env.API_URL+req.url)
 			   .then(data => res.status(200).send(data.data))
