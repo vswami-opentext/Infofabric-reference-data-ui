@@ -8,8 +8,12 @@ const path = require('path')
 app.use(bodyParser.json())
 
 // app.use(express.static(path.join(__dirname, './dist/infofabric-reference-data-ui')))
-
-app.all('/api/*', async(req, res) => {
+app.use((req, res, next) => {
+		console.log('-------------------headers1------------------------\n');
+		console.log('url 1--->', req.url);
+		next();
+});
+app.get('/api/*', async(req, res) => {
 	try{
 		console.log('-------------------headers------------------------\n');
 		console.dir(req.headers);
@@ -19,7 +23,7 @@ app.all('/api/*', async(req, res) => {
 		console.log('smuser', req.headers['smuser']);
 		console.log('smuserdn', req.headers['smuserdn']);
 		console.log('---------------------************----------------------\n');
-		console.log('url--->', process.env.API_URL+''+req.url)
+		console.log('url--->', process.env.API_URL+req.url);
 		return axios.get(process.env.API_URL+req.url)
 			   .then(data => res.status(200).send(data.data))
 			   .catch(err => res.send(err));
@@ -29,7 +33,7 @@ app.all('/api/*', async(req, res) => {
 	 }
 })
 
-app.get('/reference-data-ui/health', (req, res) => {
+app.get('/health', (req, res) => {
 	console.log('Health checked');
     res.json({status: 'UP'});
 })
