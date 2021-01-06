@@ -15,7 +15,7 @@ app.use((req, res, next) => {
 		next();
 });
 
-app.get('/api/*', async(req, res) => {
+app.get('/reference-data-ui/api/*', async(req, res) => {
 	try{
 		console.log('-------------------headers------------------------\n');
 		console.dir(req.headers);
@@ -35,7 +35,7 @@ app.get('/api/*', async(req, res) => {
 	 }
 })
 
-app.get('/health', (req, res) => {
+app.get('/reference-data-ui/health', (req, res) => {
 	console.log('Health checked');
     res.json({status: 'UP'});
 })
@@ -43,7 +43,7 @@ const _app_folder = __dirname + '/dist/infofabric-reference-data-ui';
 
 app.use('/reference-data-ui', express.static(_app_folder, {maxAge: '1m'}));
 
-app.get('/reference-data-ui', (req, res) => {
+app.get('/*', (req, res) => {
 		return res.sendFile(path.join(__dirname, './dist/infofabric-reference-data-ui/index.html'))
 })
 
