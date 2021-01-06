@@ -31,4 +31,4 @@ COPY ./build_version.json /home/node/app/build_version.json
 
 # start the server
 # CMD ["pm2-docker", "process.yaml", "--json", "--web", "9001"]
-CMD ["pm2-docker", "./process.yaml", "--json"]
+CMD ["pm2-docker", "./process.yaml"]
