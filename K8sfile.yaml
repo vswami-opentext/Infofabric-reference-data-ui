@@ -1,0 +1,104 @@
+### infofabric-reference-data-ui dependencies
+#
+apiVersion: v1
+kind: Service
+metadata:
+  name: infofabric-reference-data-ui
+spec:
+  selector:
+    app: infofabric-reference-data-ui
+  ports:
+  - name: application
+    protocol: TCP
+    port: 4200
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: infofabric-reference-data-ui
+  labels:
+    app: infofabric-reference-data-ui
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: infofabric-reference-data-ui
+      zone: bb-hsec
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: infofabric-reference-data-ui
+        zone: bb-hsec
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path:   '/metrics'
+        prometheus.io/scheme: 'https'
+    spec:
+      imagePullSecrets:
+        - name: alloy-imagepullsecret
+      containers:
+      - name: infofabric-reference-data-ui
+  #      env:
+  #        - name: API_URL
+  #          valueFrom:
+  #            configMapKeyRef:
+  #              name: infofabric-reference-data-ui
+  #              key: API_URL
+        image: bpdockerhub/infofabric-reference-data-ui:0.1.1
+        imagePullPolicy: Always
+        ports:
+        - name: application
+          containerPort: 4200
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: application
+            scheme: HTTP
+          initialDelaySeconds: 180
+          periodSeconds: 60
+          timeoutSeconds: 120
+          failureThreshold: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: application
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 60
+          timeoutSeconds: 120
+          failureThreshold: 10
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "0.2"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+        env:
+          # same in all environments (for now)
+#          - name: CACHE_TTL
+#            value: "60*14"
+          - name: NODE_ENV
+            value: production
+          - name: API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: infofabric-reference-data-ui
+                key: API_URL
+        volumeMounts:
+          - name: ifabric-secrets
+            mountPath: /opt/opentext/infofabric/secrets
+      volumes:
+      - name: ifabric-secrets
+        secret:
+          secretName: ifabric-secrets
+          defaultMode: 0644
+          items:
+          - key: app-secrets.properties
+            path: app-secrets.properties

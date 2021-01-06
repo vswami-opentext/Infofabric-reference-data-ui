@@ -1,1 +1,18 @@
-<p>export works!</p>
+<app-pop-up [showAction]='showAction' [primaryButton]='primaryButtonName' [title]='addModalTitle' (onAction)="noFilterWarning()" (cancelEvent)="onCancel()">
+    <div class="ot-form-control">
+        <label class="ot-form-control__label">
+            File Name</label>
+        <input type="text" class="ot-input" [(ngModel)]="exportData.fileName">
+    </div>
+    <div class="ot-select">
+        <select id="format-list" [(ngModel)]="exportData.formatSelected" (change)="formatChange($event)">
+            <option value="1">
+                Select dropdown</option>
+            <option *ngFor="let format of formatList" [value]="format">
+                {{format}}</option>
+        </select>
+    </div>
+</app-pop-up>
+<app-pop-up [showAction]="warningModal" [primaryButton]="primaryButtonName" [title]="addModalTitle" (onAction)="export()" (cancelEvent)="onCancel()">
+    <span style="padding: 50px;font-size:larger">No Filters have been applied, Do you still want to export ?</span>
+</app-pop-up>

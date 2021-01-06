@@ -1,10 +1,11 @@
 {
   "name": "infofabric-reference-data-ui",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "ng serve --proxy-config proxyconfig.json",
+    "dev": "cross-env NODE_ENV=development && node server.js",
+    "build": "ng build --base-href /reference-data-ui/ --deploy-url /reference-data-ui/ --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -19,8 +20,20 @@
     "@angular/platform-browser": "~9.1.12",
     "@angular/platform-browser-dynamic": "~9.1.12",
     "@angular/router": "~9.1.12",
+    "@opentext/otcss": "^2.0.5",
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.5.3",
+    "cross-env": "^7.0.3",
+    "dot-env": "0.0.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.5.1",
+    "path": "^0.12.7",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
+    "xlsx": "^0.16.9",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
@@ -41,7 +54,7 @@
     "karma-jasmine": "~3.0.1",
     "karma-jasmine-html-reporter": "^1.4.2",
     "protractor": "~7.0.0",
-    "tgocp-ng": "^7.1.40",
+    "tgocp-ng": "file:tgocp-ng",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "typescript": "~3.8.3"

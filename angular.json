@@ -29,12 +29,16 @@
             ],
             "styles": [
               "src/styles.scss",
+              "tgocp-ng/css/ot-style-meister.css",
+              "tgocp-ng/css/perfect-scrollbar.css",
               "node_modules/@opentext/otcss/dist/otcss.min.css",
-              "node_modules/font-awesome/css/font-awesome.css",
-              "node_modules/tgocp-ng/css/ot-style-meister.css",
-              "node_modules/tgocp-ng/css/perfect-scrollbar.css"
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/font-awesome/css/font-awesome.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ]
           },
           "configurations": {
             "production": {

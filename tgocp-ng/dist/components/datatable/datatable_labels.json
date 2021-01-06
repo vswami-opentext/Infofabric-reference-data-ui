@@ -1,0 +1,23 @@
+{
+    "en": {
+        "emptyMessage": "No Records"
+    },
+    "fr": {
+        "emptyMessage": "Aucun enregistrement"
+    },
+    "de": {
+        "emptyMessage": "Keine Datensätze"
+    },
+    "ru": {
+        "emptyMessage": "Нет записей"
+    },
+    "es": {
+        "emptyMessage": "Sin registros"
+    },
+    "it": {
+        "emptyMessage": "Nessun record"
+    },
+    "pt": {
+        "emptyMessage": "Nenhum registro"
+    }
+}
