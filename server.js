@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express')
 const app = express()
+const router = express.Router();
 const axios = require('axios');
 const bodyParser = require('body-parser')
 const path = require('path')
@@ -15,7 +16,16 @@ app.use((req, res, next) => {
 		next();
 });
 
-app.get('/reference-data-ui/api/*', async(req, res) => {
+const _app_folder = __dirname + '/dist/infofabric-reference-data-ui';
+
+router.use('/', express.static(_app_folder, {maxAge: '1m'}));
+
+router.get('/health', (req, res) => {
+	console.log('Health checked');
+    res.json({status: 'UP'});
+})
+
+router.get('/api/*', async(req, res) => {
 	try{
 		console.log('-------------------headers------------------------\n');
 		console.dir(req.headers);
@@ -34,17 +44,9 @@ app.get('/reference-data-ui/api/*', async(req, res) => {
 		console.error("api call error on all paths:", err);
 	 }
 })
-
-app.get('/reference-data-ui/health', (req, res) => {
-	console.log('Health checked');
-    res.json({status: 'UP'});
+router.get('/*', (req, res) => {
+	return res.sendFile(path.join(__dirname, './dist/infofabric-reference-data-ui/index.html'))
 })
-const _app_folder = __dirname + '/dist/infofabric-reference-data-ui';
-
-app.use('/reference-data-ui', express.static(_app_folder, {maxAge: '1m'}));
-
-app.get('/*', (req, res) => {
-		return res.sendFile(path.join(__dirname, './dist/infofabric-reference-data-ui/index.html'))
-})
+app.use('/reference-data-ui', router);
 
 app.listen(4200, _ => console.log('Loaded Successfully...'))
