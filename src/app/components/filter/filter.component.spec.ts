@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FilterComponent } from './filter.component';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('FilterComponent', () => {
   let component: FilterComponent;
@@ -8,7 +9,11 @@ describe('FilterComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FilterComponent ]
+      declarations: [ FilterComponent ],
+      schemas: [
+        CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA
+      ],
+      imports:[ HttpClientModule ]
     })
     .compileComponents();
   }));

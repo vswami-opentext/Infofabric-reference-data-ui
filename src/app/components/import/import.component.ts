@@ -20,7 +20,6 @@ export class ImportComponent implements OnInit {
   importData ={name:''};
   importResponseReceived:any;
   prop = new NotificationProperties();
-  changeDetection: ChangeDetectionStrategy.OnPush
 
   @Input() showAction:boolean = true;
   @Output() cancelEmit = new EventEmitter();

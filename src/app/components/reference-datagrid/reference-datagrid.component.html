@@ -16,6 +16,6 @@
         </ot-column>
     </ot-dataTable>
 </div>
-<h4 *ngIf="!gridData" class="empty-wrapper">No Records Found</h4>
+<h4 *ngIf="!gridData" class="empty-wrapper">{{'NO RECORDS FOUND' }}</h4>
 
 <app-add-comp *ngIf="editModal" [onDisable]="deleteModal" [primaryButtonName]="primaryButtonName" [addModalTitle]="addModalTitle" [showAction]="editModal" [rowDatas]="rowData" (cancelEmit)="onCancel()"></app-add-comp>

@@ -12,7 +12,6 @@ app.use(bodyParser.json())
 app.use((req, res, next) => {
 		console.log('-------------------headers1------------------------\n');
 		console.log('url 1--->', req.url);
-		console.log('req headers 1--->', req.headers);
 		next();
 });
 
@@ -35,8 +34,8 @@ router.get('/api/*', async(req, res) => {
 		console.log('smuser', req.headers['smuser']);
 		console.log('smuserdn', req.headers['smuserdn']);
 		console.log('---------------------************----------------------\n');
-		console.log('url--->', process.env.API_URL+req.url);
-		return axios.get(process.env.API_URL+'/'+req.params[0])
+		console.log('url--->', process.env.API_URL+req.url+req.params), process.env.API_URL+req.url.slice(4, req.url.length);
+		return axios.get(process.env.API_URL+req.url.slice(4, req.url.length))
 			   .then(data => res.status(200).send(data.data))
 			   .catch(err => res.send(err));
 	 }

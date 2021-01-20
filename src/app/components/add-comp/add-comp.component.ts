@@ -6,6 +6,8 @@ import { NotificationProperties, NotificationService } from 'tgocp-ng/dist';
 import orderBy from 'lodash/orderBy';
 import get from 'lodash/get';
 import isNumber from 'lodash/isNumber';
+import mapValues from 'lodash/mapValues';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-add-comp',
@@ -15,8 +17,6 @@ import isNumber from 'lodash/isNumber';
 })
 export class AddCompComponent implements OnInit {
 
-  // primaryButtonName:string = 'Add';
-  // addModalTitle:string = 'Add Component';
   attributes = [];
   fields = [];
   equality = [];
@@ -25,7 +25,7 @@ export class AddCompComponent implements OnInit {
     data: 2,
     metadata: 3
   }
-  activeKeyFields =[]
+  activeKeyFields = []
   hasRelationships = true;
   relationships = [];
   types = [];
@@ -33,15 +33,14 @@ export class AddCompComponent implements OnInit {
   relatedEqualities = {};
   activeRelatedTypes = [];
   query = '';
-  selectedRecord= {};
-  headers =[];
-  selectedRelationshipField= {};
-  relatedFieldInfo= [];
+  selectedRecord = {};
+  headers = [];
+  selectedRelationshipField = {};
+  relatedFieldInfo = [];
   rowData = {};
+  isLoading:boolean=false;
+  subs: Subscription[] =[];
   prop = new NotificationProperties();
-
-  // @Input()
-  // activeRelatedTypes:any;
 
   @Input() primaryButtonName:any;
   @Input() addModalTitle:any;
@@ -62,9 +61,10 @@ export class AddCompComponent implements OnInit {
       this.activeRelatedTypes = this.store.activeRelatedTypes;
     }
 
-  joinedSelections(key, value) { 
-    this.getRelatedFieldData();
+  joinedSelections(key, value) {
+    // this.store.getRelatedFieldData();
     let values = _.map(this.getRelatedInfoForRelationship_op1(key, value), 'value');
+    // let values = this.getRelatedInfoForRelationship_op1(key, value);
     console.log('values--->', values);
     if (value) {
       value.forEach((element) => {
@@ -97,51 +97,51 @@ export class AddCompComponent implements OnInit {
     return orderBy(input, direction);
   }
 
-  getRelatedDocuments(type, query, relName, keyField) {
-    console.log('getRelatedDocuments-->');
-    // this.$nextTick(async () => {
-      const payload = {
-        tenant: this.store.activeTenant,
-        model: this.store.activeModel['name'],
-        queryString: query,
-        type
-      };
-      try {
-        // const { ok, data } =  this.service.getRecords(payload);
-        const data =  this.service.getRecords(payload);
+  // getRelatedDocuments(type, query, relName, keyField) {
+  //   console.log('getRelatedDocuments-->');
+  //   // this.$nextTick(async () => {
+  //     const payload = {
+  //       tenant: this.store.activeTenant,
+  //       model: this.store.activeModel['name'],
+  //       queryString: query,
+  //       type
+  //     };
+  //     try {
+  //       // const { ok, data } =  this.service.getRecords(payload);
+  //       const data =  this.service.getRecords(payload);
         
-        // if (ok) {
-          data.results.forEach((dat) => {
-            Object.keys(dat).forEach((d) => {
-              if (_.findIndex(this.relatedFieldInfo, r => (r.name === `${relName}-${d}`)) === -1) {
-                this.relatedFieldInfo.push({
-                  name: `${relName}-${d}`,
-                  actualFilterValue: keyField,
-                  values: _.map(data.results, (res) => { return { name: res[d], value: parseInt(res.id, 10) }; })
-                });
-              }
-            });
-          });
-        // }
-      } catch (error) {
-        console.log(error);
-      }
-      this.store.relatedFieldInfo = this.relatedFieldInfo;
-    // });
-  }
+  //       // if (ok) {
+  //         data.results.forEach((dat) => {
+  //           Object.keys(dat).forEach((d) => {
+  //             if (_.findIndex(this.relatedFieldInfo, r => (r.name === `${relName}-${d}`)) === -1) {
+  //               this.relatedFieldInfo.push({
+  //                 name: `${relName}-${d}`,
+  //                 actualFilterValue: keyField,
+  //                 values: _.map(data.results, (res) => { return { name: res[d], value: parseInt(res.id, 10) }; })
+  //               });
+  //             }
+  //           });
+  //         });
+  //       // }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //     this.store.relatedFieldInfo = this.relatedFieldInfo;
+  //   // });
+  // }
 
-  getRelatedFieldData() {
-    console.log('----+_+3',this.relatedFieldInfo, this.store.activeRelatedTypes);
-    if (this.hasRelationships && this.store.activeRelatedTypes.length > 0) {
+  // getRelatedFieldData() {
+  //   console.log('----+_+3',this.relatedFieldInfo, this.store.activeRelatedTypes);
+  //   if (this.hasRelationships && this.store.activeRelatedTypes.length > 0) {
       
-      this.store.activeRelatedTypes.forEach(async (t) => {
-        if (t.type[0]) {
-          const query = `${t.selections}`;
-          this.getRelatedDocuments(t.type[0].name, query, t.relName, t.keyField);
-        }
-      });
-    }
-  }
+  //     this.store.activeRelatedTypes.forEach(async (t) => {
+  //       if (t.type[0]) {
+  //         const query = `${t.selections}`;
+  //         this.getRelatedDocuments(t.type[0].name, query, t.relName, t.keyField);
+  //       }
+  //     });
+  //   }
+  // }
 
   getRelatedInfo(key, value = '', mode = '') {
     let returnValue;
@@ -168,6 +168,7 @@ export class AddCompComponent implements OnInit {
           // returnValue[i] = this.getRelatedInfo(el);
         }
       });
+      console.log('-=-=============we>',returnValue);
       return returnValue;
     }
 
@@ -197,19 +198,107 @@ export class AddCompComponent implements OnInit {
     this.cancelEmit.emit();
   }
 
-  async onAction(){
-    console.log('--->',this.primaryButtonName ,this.rowData);
+  async onAction(event) {
+    console.log('--->', this.primaryButtonName, this.rowData);
+    this.isLoading = true;
     let result;
-    if(this.primaryButtonName == 'create'){
-      result =await this.service.createRecord(this.rowData)
-    } else if(this.primaryButtonName == 'update'){
-      result = await this.service.updateRecord(this.rowData);
-    }else{
-      result =await this.service.deleteRecord(this.rowData);
+    if (this.primaryButtonName == 'Create') {
+      this.saveRecord(this.rowData, 'Create');
+    } else if (this.primaryButtonName == 'Update') {
+      this.saveRecord(this.rowData, 'update');
+    } else {
+      const deletedRecord = _.cloneDeep(this.selectedRecord);
+      deletedRecord.deleted = true;
+      this.saveRecord(deletedRecord, 'delete');
     }
     this.prop.type = 'success';
     this.prop.title = result;
-    this.notification.show(this.prop); 
+    this.notification.show(this.prop);
+  }
+
+  trimObjectValuesM(input) {
+    return mapValues(input, (val) => {
+      if (typeof val === 'boolean') {
+        return val;
+      }
+      return typeof val === 'object' ? this.trimObjectValuesM(val) : val.toString().trim();
+    });
+  }
+
+  async saveRecord(inputRecordData, value) {
+    // let recordData = inputRecordData;
+    console.log('------------------------------------------------------------rowDatas-->', this.store.attributes, this.rowDatas);
+    if (value === 'delete') {
+      this.rowDatas = _.pick(this.rowDatas, _.map(_.filter(this.store.attributes, a => !a.isMeta), 'name'));
+    } else {
+      this.rowDatas = _.pick(this.rowDatas, _.map(_.filter(this.store.attributes, a => a.name !== 'deleted' && !a.isMeta), 'name'));
+    }
+
+    // Since the relationship object has been stored with `-` as a seperator, this is necessary.
+    // ToDo: Find a better way to store related fields so that this can be avoided.
+    if (this.hasRelationships) {
+      _.forOwn(inputRecordData, (r, rk) => {
+        if (rk.includes('-')) {
+          let temp = rk.split('-');
+          let key = temp[0];
+          let val = temp[1];
+          if (this.rowDatas[key]) {
+            let rel = this.rowDatas[key];
+            rel[val] = r;
+          } else {
+            this.rowDatas[key] = { [val]: r };
+          }
+        }
+      });
+    }
+
+    const payload = {
+      [this.store.activeType['name']]: [{
+        [this.store.activeType['name']]: this.trimObjectValuesM(this.rowDatas)
+      }]
+    };
+
+    // this.pending = true;
+    if (this.store.activeDataStream !== null || this.store.activeCastConnector !== null) {
+      try {
+        const { ok, data } = await this.service.saveRecord({
+          tenant: this.store.activeTenant,
+          model: this.store.activeModel['name'],
+          stream: this.store.activeDataStream,
+          connector: this.store.activeCastConnector,
+          queryString: this.store.query,
+          type: {
+            name: this.store.activeType['name'],
+            equality: this.store.getEquality()
+          },
+          payload
+        });
+        if (ok) {
+          this.isLoading = false;
+          // this.$nextTick(() => {
+            // this.fetchDocuments();
+          // });
+          // this.setSuccessText(`${this.activeType.name} item ${value}d`);
+        } else {
+          console.error('ERROR', data);
+          // this.setErrorText(`Failed to ${value} ${this.activeType.name} item`);
+        }
+      } catch (error) {
+        console.error('ERROR', error);
+        this.isLoading = false;
+        if (error.data.message) {
+          // this.setErrorText(`There was a problem with ${value}. Reason: ${error.data.message}`);
+        } else {
+          // this.setErrorText(`There was a problem with ${value}. Reason: Internal Error`);
+        }
+      } finally {
+        // this.pending = false;
+        // this.closeModal(value);
+      }
+    } else {
+      // this.pending = false;
+      //this.setErrorText(`Failed to ${value}. Reference data ingest stream name is not defined for the model`);
+    }
   }
 
 }

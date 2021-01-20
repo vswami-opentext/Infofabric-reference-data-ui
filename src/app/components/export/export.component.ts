@@ -34,7 +34,6 @@ export class ExportComponent implements OnInit, OnDestroy {
   }
 
   formatChange(event){
-    console.log('--->',event);
     this.exportData['formatSelected'] = event.target.value;
   }
   noFilterWarning(){

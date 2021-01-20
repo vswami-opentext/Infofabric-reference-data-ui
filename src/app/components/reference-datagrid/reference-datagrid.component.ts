@@ -40,11 +40,13 @@ export class ReferenceDatagridComponent implements OnInit, OnChanges, OnDestroy 
   ngOnInit(): void {
     console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     this.store.loadGrid().subscribe(data => {
-      console.log('grid second------->',data.results);
-      this.gridData = data.results;
-      this.fetchColumns(data.results);
-      this.gridData = this.flattenedReferenceDocs(data.results);
-      this.loadHeader();
+      console.log('grid second------->',data);
+      if(data){
+        this.gridData = data.results;
+        this.fetchColumns(data.results);
+        this.gridData = this.flattenedReferenceDocs(data.results);
+      }
+      // this.loadHeader();
     })
     
     // if(this.store.referenceData){
@@ -104,23 +106,23 @@ export class ReferenceDatagridComponent implements OnInit, OnChanges, OnDestroy 
     this.deleteModal = true;
   }
 
-  onRowClick(event){
-    console.log('permission test--->',this.userWritable(), this.store.isReadOnly);
-    if(!this.store.isReadOnly){
- 
-    this.rowData = event.data;
-    console.log('match--->',event.originalEvent.target.id);
-    this.editModal = true;
-    if(event.originalEvent.target.id == 'delete'){
-      // this.onDeleteRow();
-      this.primaryButtonName = 'Delete';
-      this.addModalTitle = 'Are you sure you want to delete this record';
-      this.deleteModal = true;
-    } else{
-      this.primaryButtonName = 'Update';
-      this.addModalTitle = 'Edit Record'
+  onRowClick(event) {
+    console.log('permission test--->', this.userWritable(), this.store.isReadOnly);
+    if (!this.store.isReadOnly) {
+
+      this.rowData = event.data;
+      console.log('match--->', event.originalEvent.target.id);
+      this.editModal = true;
+      if (event.originalEvent.target.id == 'delete') {
+        // this.onDeleteRow();
+        this.primaryButtonName = 'Delete';
+        this.addModalTitle = 'Are you sure you want to delete this record';
+        this.deleteModal = true;
+      } else {
+        this.primaryButtonName = 'Update';
+        this.addModalTitle = 'Edit Record'
+      }
     }
-  }
   }
 
   onCancel(){
@@ -131,7 +133,6 @@ export class ReferenceDatagridComponent implements OnInit, OnChanges, OnDestroy 
     this.activeType = this.store.activeType;
     let activeModel = this.store.activeModel;
     this.attributes = _.filter(activeModel['attributes'], a => this.activeType['attributes'].includes(a.id));
-    // this.attributes = this.store.attributes;
     
      this.headers = _.sortBy(_.map(_.filter(this.attributes, a => a.name !== 'deleted'), (a, i) => {
       this.fields.push(a.name);
@@ -250,11 +251,11 @@ export class ReferenceDatagridComponent implements OnInit, OnChanges, OnDestroy 
   }
 
   userWritable() {
-    if (this.store.activeCastConnector !== null) {
-      return this.store.permission[this.store.activeTenant].dataCast;
-    } else if (this.store.activeDataStream !== null) {
-      return this.store.permission[this.store.activeTenant].dataStream;
-    }
+  //   if (this.store.activeCastConnector !== null) {
+  //     return this.store.permission[this.store.activeTenant['name']].dataCast;
+  //   } else if (this.store.activeDataStream !== null) {
+  //     return this.store.permission[this.store.activeTenant['name']].dataStream;
+  //   }
     return false;
   }
 

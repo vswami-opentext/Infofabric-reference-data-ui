@@ -4,24 +4,21 @@
   <div class="ot-modal__content" [ngClass]="size =='lg' ? ' ot-modal-lg-width' : ''">
     <div class="ot-modal__header">
       <p class="title">
-        <i class="fa fa-question-circle icon-cls"></i>{{this.title}}
+        <i class="fa fa-question-circle icon-cls"></i>{{this.title }}
       </p>
     </div>
-    <div class="ot-modal__body">
+    <div class="ot-modal__body" style="padding: 20px;">
       <ng-content></ng-content>
     </div>
     <div class="ot-modal__footer">
       <div class="ot-btn-group">
         <button class="ot-btn ot-btn--is-primary" [disabled]="disabledPrimary" (click)="onSaveClick()">
-          {{primaryButton}}
+          {{ primaryButton }}
         </button>
         <button class="ot-btn ot-btn--is-secondary" (click)="onCancelClick()">
-          Cancel
+          {{ 'CANCEL' }}
         </button>
       </div>
     </div>
   </div>
 </div>
-<!-- <ot-modal [size]="lg">
-  
-</ot-modal> -->

@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { Subject } from 'rxjs/internal/Subject';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { Observable } from 'rxjs/internal/Observable';
+import { MainServiceService } from './main-service.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class StoreService {
   typeList = [];
   modelList = [];
   activeModel = {};
-  activeTenant ='thermofisher';
+  activeTenant ={};
   attributes = [];
   relationships = [];
   query = ''
@@ -27,6 +28,7 @@ export class StoreService {
   permission = {};
   isReadOnly = false;
   filters = [];
+  roles:any;
   pagination:any = {
     page: 1,
     rowsPerPage: 10,
@@ -34,13 +36,16 @@ export class StoreService {
     descending: true,
     totalItems: 0
   }
+  equality:any= [];
+
+  hasRelationships=true;
 
   private _subject = new Subject<any>();
   activeDataStream: any;
   activeCastConnector: any;
 
 
-  constructor() { }
+  constructor(private service: MainServiceService) { }
 
   setActiveRelatedTypes(data){
     this.activeRelatedTypes = data;
@@ -48,6 +53,10 @@ export class StoreService {
 
   setFilters(filter){
     this.filters = filter;
+  }
+
+  getEquality(){
+    return !_.isEmpty(this.activeType) ? _.map(this.activeType['equality'].fields, 'name') : []
   }
 
   setStream(){
@@ -73,6 +82,7 @@ export class StoreService {
 
   setModelList(model){
     this.modelList = model;
+    this.roles = this.service.getFeatures({tenant :this.activeTenant});
   }
 
   setActiveModel(model){
@@ -125,10 +135,61 @@ export class StoreService {
   }
 
   setAttributes(){
-    this.attributes = this.attributes || _.filter(this.activeModel['attributes'], a => this.activeType['attributes'].includes(a.id));
+    console.log('********************************--->', this.activeModel, this.activeType);
+    this.attributes = _.filter(this.activeModel['attributes'], a => this.activeType['attributes'].includes(a.id));
   }
 
   setHeaders(header){
     this.headers = header;
+  }
+
+  getRelatedFieldInfo(){
+    return this.relatedFieldInfo;
+  }
+
+  getRelatedFieldData() {
+    console.log('----+_+3',this.relatedFieldInfo, this.activeRelatedTypes);
+    if (this.hasRelationships && this.activeRelatedTypes.length > 0) {
+      
+      this.activeRelatedTypes.forEach(async (t) => {
+        if (t.type[0]) {
+          const query = `${t.selections}`;
+          this.getRelatedDocuments(t.type[0].name, query, t.relName, t.keyField);
+        }
+      });
+    }
+  }
+
+  getRelatedDocuments(type, query, relName, keyField) {
+    console.log('getRelatedDocuments-->');
+    // this.$nextTick(async () => {
+      const payload = {
+        tenant: this.activeTenant,
+        model: this.activeModel['name'],
+        queryString: query,
+        type
+      };
+      try {
+        // const { ok, data } =  this.service.getRecords(payload);
+        const data =  this.service.getRecords(payload);
+        
+        // if (ok) {
+          data.results.forEach((dat) => {
+            Object.keys(dat).forEach((d) => {
+              if (_.findIndex(this.relatedFieldInfo, r => (r.name === `${relName}-${d}`)) === -1) {
+                this.relatedFieldInfo.push({
+                  name: `${relName}-${d}`,
+                  actualFilterValue: keyField,
+                  values: _.map(data.results, (res) => { return { name: res[d], value: parseInt(res.id, 10) }; })
+                });
+              }
+            });
+          });
+        // }
+      } catch (error) {
+        console.log(error);
+      }
+      this.relatedFieldInfo = this.relatedFieldInfo;
+    // });
   }
 }
