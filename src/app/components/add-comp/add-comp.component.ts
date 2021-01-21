@@ -53,7 +53,7 @@ export class AddCompComponent implements OnInit {
 
   ngOnInit(): void {
     // ngOnChanges(){
-      console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@--------------------');
+      console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@--------------------');
       if(this.rowDatas){
         this.rowData =this.rowDatas;
       }
