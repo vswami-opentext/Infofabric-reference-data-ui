@@ -227,7 +227,6 @@ export class AddCompComponent implements OnInit {
 
   async saveRecord(inputRecordData, value) {
     // let recordData = inputRecordData;
-    console.log('------------------------------------------------------------rowDatas-->', this.store.attributes, this.rowDatas);
     if (value === 'delete') {
       this.rowDatas = _.pick(this.rowDatas, _.map(_.filter(this.store.attributes, a => !a.isMeta), 'name'));
     } else {
